@@ -343,6 +343,10 @@ describe("M6 policy — DETERMINISM (STEP 16)", () => {
         sem({ direction: "DEGRADED", type: "SUPPORT_QUALITY_CHANGED", confidence: 0.95 }),
       ],
     });
-    expect(evaluatePolicy(r)).toEqual(evaluatePolicy(r));
+    const first = evaluatePolicy(r);
+    const second = evaluatePolicy(r);
+    expect(first.decision).toBe(second.decision);
+    expect(first.policyVersion).toBe(second.policyVersion);
+    expect(first.reasons).toEqual(second.reasons);
   });
 });

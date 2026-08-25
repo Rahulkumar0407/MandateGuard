@@ -14,6 +14,28 @@ export async function seedMerchantData(prisma: PrismaClient): Promise<void> {
     await prisma.product.upsert({ where: { id: p.id }, update: p, create: p });
   }
   for (const o of offers) {
-    await prisma.offer.upsert({ where: { id: o.id }, update: o, create: o });
+    const data = {
+      productId: o.productId,
+      version: o.version,
+      name: o.name,
+      description: o.description,
+      price: o.price,
+      currency: o.currency,
+      billingInterval: o.billingInterval,
+      duration: o.duration,
+      entitlementKeys: o.entitlementKeys,
+      refundWindowDays: o.refundWindowDays,
+      supportTerms: o.supportTerms,
+      semanticTerms: o.semanticTerms,
+      structuredCommitments: (o.structuredCommitments as object) ?? undefined,
+      isConfirmedByMerchant: o.isConfirmedByMerchant ?? false,
+      versionHash: o.versionHash ?? null,
+      active: o.active,
+    };
+    await prisma.offer.upsert({
+      where: { id: o.id },
+      update: data,
+      create: { id: o.id, ...data },
+    });
   }
 }

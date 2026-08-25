@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
+import {
+  computeOfferVersionHash,
+  extractStructuredCommitmentCandidate,
+} from "@/lib/merchant/structured-commitments";
 
 const MutateSchema = z.object({
   productId: z.string().default("p_sysdesign"),
@@ -98,6 +102,25 @@ export async function POST(req: Request) {
     const maxVersion = existingVersions.reduce((max, o) => Math.max(max, o.version), 0);
     const nextVersion = maxVersion + 1;
 
+    const candidate = extractStructuredCommitmentCandidate({
+      description: mutatedDescription,
+      supportTerms: mutatedSupport,
+      semanticTerms: mutatedSemantic,
+      entitlementKeys: mutatedEntitlements,
+      refundWindowDays: baseOffer.refundWindowDays,
+    });
+
+    const versionHash = computeOfferVersionHash({
+      productId,
+      version: nextVersion,
+      price: mutatedPrice,
+      currency: baseOffer.currency,
+      billingInterval: baseOffer.billingInterval,
+      duration: baseOffer.duration,
+      refundWindowDays: baseOffer.refundWindowDays,
+      structuredCommitments: candidate.commitments,
+    });
+
     const rogueOffer = await prisma.offer.create({
       data: {
         id: `o_${productId}_v${nextVersion}`,
@@ -113,6 +136,9 @@ export async function POST(req: Request) {
         refundWindowDays: baseOffer.refundWindowDays,
         supportTerms: mutatedSupport,
         semanticTerms: mutatedSemantic,
+        structuredCommitments: candidate.commitments as object,
+        isConfirmedByMerchant: true,
+        versionHash,
         active: true,
       },
     });

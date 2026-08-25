@@ -35,6 +35,7 @@ model Subscription {
   updatedAt            DateTime  @updatedAt
 
   webhookEvents        WebhookEvent[]
+  envelopes            AuthorizationEnvelope[]
 }
 
 // Idempotency / dedup table for Razorpay webhook delivery.
@@ -70,6 +71,7 @@ model Merchant {
 
   products Product[]
   mandates Mandate[]
+  envelopes AuthorizationEnvelope[]
 }
 
 model Product {
@@ -107,15 +109,21 @@ model Offer {
   duration         Int // entitlement duration in days
   entitlementKeys  String[] // structured, queryable list of entitlements
   refundWindowDays Int // structured refund policy (days)
-  supportTerms     String // semantic/unstructured — data only, never executed
-  semanticTerms    String // semantic/unstructured — data only, never executed
-  active           Boolean  @default(true)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  supportTerms          String // semantic/unstructured — data only, never executed
+  semanticTerms         String // semantic/unstructured — data only, never executed
+  structuredCommitments Json? // M9 Phase 1: Structured Commercial Commitments
+  isConfirmedByMerchant Boolean  @default(false) // Merchant confirmation gate
+  versionHash           String? // SHA-256 deterministic content fingerprint
+  active                Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  authorizedEnvelopes   AuthorizationEnvelope[]
 
   @@unique([productId, version])
   @@index([productId])
   @@index([active])
+  @@index([versionHash])
 }
 
 // ---------------------------------------------------------------------------
@@ -135,6 +143,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   mandates Mandate[]
+  envelopes AuthorizationEnvelope[]
 }
 
 model Mandate {
@@ -152,6 +161,7 @@ model Mandate {
   updatedAt             DateTime @updatedAt
 
   snapshot AuthorizedOfferSnapshot?
+  envelope AuthorizationEnvelope?
 
   @@index([userId])
   @@index([razorpaySubscriptionId])
@@ -254,4 +264,42 @@ model MandateAction {
 
   @@index([mandateId])
   @@index([status])
+}
+
+// ---------------------------------------------------------------------------
+// M9 Phase 2: Authorization Envelope
+//
+// The AuthorizationEnvelope represents what this specific subscriber/user/agent
+// authorized and what the user/agent is allowed to do autonomously.
+// It remains pinned to the original authorized commercial baseline (OfferVersion).
+// ---------------------------------------------------------------------------
+
+model AuthorizationEnvelope {
+  id                       String        @id @default(cuid())
+  userId                   String
+  user                     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchantId               String
+  merchant                 Merchant      @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  subscriptionId           String?
+  subscription             Subscription? @relation(fields: [subscriptionId], references: [id])
+  mandateId                String?       @unique
+  mandate                  Mandate?      @relation(fields: [mandateId], references: [id], onDelete: Cascade)
+  authorizedOfferVersionId String
+  authorizedOfferVersion   Offer         @relation(fields: [authorizedOfferVersionId], references: [id])
+  authorizedOfferHash      String        // SHA-256 fingerprint of the authorized OfferVersion
+  baselineCommitments      Json          // Frozen StructuredCommitments + core commercial facts
+  financialConstraints     Json          // maxPricePaise, allowedCurrencies, maxPriceIncreasePercent, allowedBillingIntervals
+  agentPermissions         Json          // canAutoApproveMinorChanges, canAutoPauseOnBreach, canApproveRefundRequest, canMigrateToNewVersion
+  tolerancePolicy          Json          // priceIncreasePercentTolerance, allowedTierDowngrades, allowedRemovedEntitlements, refundWindowReductionDaysTolerance
+  authorizationPolicyHash  String        // Deterministic SHA-256 hash of (financialConstraints + agentPermissions + tolerancePolicy)
+  status                   String        @default("ACTIVE") // ACTIVE | SUSPENDED | REVOKED | EXPIRED
+  createdAt                DateTime      @default(now())
+  updatedAt                DateTime      @updatedAt
+  expiresAt                DateTime?
+
+  @@index([userId])
+  @@index([merchantId])
+  @@index([authorizedOfferVersionId])
+  @@index([status])
+  @@index([authorizedOfferHash])
 }

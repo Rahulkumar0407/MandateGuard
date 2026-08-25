@@ -6,6 +6,7 @@ import {
   type SemanticComparisonInput,
   type SemanticEvaluation,
   type SemanticEvaluationStatus,
+  type SemanticFinding,
 } from "./semantic";
 
 // ---------------------------------------------------------------------------
@@ -166,9 +167,78 @@ export async function runSemanticEvaluation(
 }
 
 // ---------------------------------------------------------------------------
-// Factory / test seam (STEP 23). Default is the real provider; unconfigured it
-// fails safe to UNAVAILABLE so the project stays runnable offline. Tests inject
-// the Mock via setSemanticProvider.
+// DeterministicSemanticIntegrityProvider — offline/demo semantic evaluation.
+//
+// Evaluates semantic changes deterministically when no external LLM credentials
+// are configured in the environment.
+// ---------------------------------------------------------------------------
+
+export class DeterministicSemanticIntegrityProvider
+  implements SemanticIntegrityProvider
+{
+  async evaluate(input: SemanticComparisonInput): Promise<SemanticEvaluation> {
+    const baselineSupport = (input.baseline.supportTerms ?? "").toLowerCase();
+    const currentSupport = (input.current.supportTerms ?? "").toLowerCase();
+    const baselineDesc = (input.baseline.description ?? "").toLowerCase();
+    const currentDesc = (input.current.description ?? "").toLowerCase();
+
+    const findings: SemanticFinding[] = [];
+
+    if (
+      (baselineSupport.includes("mentor") ||
+        baselineSupport.includes("1:1") ||
+        baselineSupport.includes("48 hours") ||
+        baselineSupport.includes("live") ||
+        baselineSupport.includes("sla")) &&
+      (currentSupport.includes("discord") ||
+        currentSupport.includes("no 1:1") ||
+        currentSupport.includes("not guaranteed") ||
+        currentSupport.includes("community only") ||
+        currentSupport.includes("peer"))
+    ) {
+      findings.push({
+        type: "SUPPORT_QUALITY_CHANGED",
+        severity: "CRITICAL",
+        direction: "DEGRADED",
+        baseline: input.baseline.supportTerms,
+        current: input.current.supportTerms,
+        explanation:
+          "Support downgraded from dedicated mentor/guaranteed SLAs to community Discord peer help only.",
+        confidence: 0.95,
+      });
+    }
+
+    if (
+      (baselineDesc.includes("mentor") ||
+        baselineDesc.includes("1:1") ||
+        baselineDesc.includes("structured")) &&
+      (currentDesc.includes("discord") ||
+        currentDesc.includes("self-paced") ||
+        currentDesc.includes("peer"))
+    ) {
+      findings.push({
+        type: "SERVICE_SCOPE_CHANGED",
+        severity: "CRITICAL",
+        direction: "DEGRADED",
+        baseline: input.baseline.description,
+        current: input.current.description,
+        explanation:
+          "Core offering changed from mentor-guided curriculum to self-paced peer modules.",
+        confidence: 0.9,
+      });
+    }
+
+    return {
+      changed: findings.length > 0,
+      findings,
+    };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Factory / test seam (STEP 23). Default is the real provider if configured;
+// otherwise falls back to DeterministicSemanticIntegrityProvider so the demo
+// and test mode work offline. Tests inject the Mock via setSemanticProvider.
 // ---------------------------------------------------------------------------
 
 let providerOverride: SemanticIntegrityProvider | null = null;
@@ -184,7 +254,11 @@ export function setSemanticProvider(
 export function getSemanticProvider(): SemanticIntegrityProvider {
   if (providerOverride) return providerOverride;
   if (!providerSingleton) {
-    providerSingleton = new RealSemanticIntegrityProvider();
+    if (process.env.SEMANTIC_LLM_API_KEY && process.env.SEMANTIC_LLM_BASE_URL) {
+      providerSingleton = new RealSemanticIntegrityProvider();
+    } else {
+      providerSingleton = new DeterministicSemanticIntegrityProvider();
+    }
   }
   return providerSingleton;
 }

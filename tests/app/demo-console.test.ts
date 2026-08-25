@@ -6,6 +6,9 @@ vi.mock("@/lib/db", () => {
       upsert: vi.fn().mockResolvedValue({ id: "m_interviewforge" }),
       updateMany: vi.fn().mockResolvedValue({ count: 1 }),
     },
+    user: {
+      upsert: vi.fn().mockResolvedValue({ id: "buyer_demo_user" }),
+    },
     product: {
       upsert: vi.fn().mockResolvedValue({ id: "p_sysdesign" }),
     },

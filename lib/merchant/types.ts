@@ -30,6 +30,8 @@ export interface ProductModel {
   updatedAt: Date;
 }
 
+import type { StructuredCommitments } from "./structured-commitments";
+
 export interface OfferModel {
   id: string;
   productId: string;
@@ -44,6 +46,9 @@ export interface OfferModel {
   refundWindowDays: number;
   supportTerms: string;
   semanticTerms: string;
+  structuredCommitments?: StructuredCommitments | null;
+  isConfirmedByMerchant?: boolean;
+  versionHash?: string | null;
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -67,6 +72,8 @@ export interface OfferSummaryDTO {
   currency: string;
   billingInterval: string;
   duration: number;
+  isConfirmedByMerchant?: boolean;
+  versionHash?: string | null;
 }
 
 export interface ProductDTO {
@@ -93,6 +100,9 @@ export interface OfferDetailDTO {
   refundPolicy: { windowDays: number };
   supportTerms: string;
   semanticTerms: string;
+  structuredCommitments?: StructuredCommitments | null;
+  isConfirmedByMerchant?: boolean;
+  versionHash?: string | null;
   availability: "ACTIVE" | "INACTIVE";
 }
 
