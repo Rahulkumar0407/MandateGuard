@@ -164,12 +164,18 @@ export class ReauthorizationService {
       );
     }
 
+    // Update old envelope to REAUTHORIZED
+    await this.envelopeService.updateEnvelopeStatus(
+      origEnvelope.id,
+      "REAUTHORIZED",
+    );
+
     // Create new pinned envelope
     const newEnvelope = await this.envelopeService.createAuthorizationEnvelope({
       userId: origEnvelope.userId,
       offerId: request.targetOfferVersionId,
       subscriptionId: origEnvelope.subscriptionId,
-      mandateId: origEnvelope.mandateId,
+      mandateId: null,
       financialConstraints: {
         ...origEnvelope.financialConstraints,
         ...input.updatedFinancialConstraints,
@@ -180,12 +186,6 @@ export class ReauthorizationService {
         ...input.updatedTolerancePolicy,
       },
     });
-
-    // Update old envelope to REAUTHORIZED
-    await this.envelopeService.updateEnvelopeStatus(
-      origEnvelope.id,
-      "REAUTHORIZED",
-    );
 
     // Update request
     const updatedRequest = await this.repo.updateRequest(request.id, {
