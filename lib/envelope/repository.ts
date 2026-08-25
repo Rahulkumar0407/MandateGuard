@@ -147,7 +147,14 @@ export class PrismaEnvelopeRepository implements EnvelopeRepository {
     subscriptionId: string,
   ): Promise<AuthorizationEnvelopeModel | null> {
     const found = await this.prisma.authorizationEnvelope.findFirst({
-      where: { subscriptionId },
+      where: {
+        OR: [
+          { id: subscriptionId },
+          { subscriptionId },
+          { mandate: { razorpaySubscriptionId: subscriptionId } },
+          { subscription: { razorpaySubscriptionId: subscriptionId } },
+        ],
+      },
       orderBy: { createdAt: "desc" },
     });
     return found ? toModel(found) : null;
