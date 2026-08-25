@@ -17,7 +17,7 @@ export interface MerchantOfferRepository {
     category?: string;
   }): Promise<ProductModel[]>;
   listActiveOffers(filter: {
-    merchantId: string;
+    merchantId?: string;
     productId?: string;
   }): Promise<OfferModel[]>;
   getActiveOfferById(offerId: string): Promise<OfferModel | null>;
@@ -135,14 +135,17 @@ export class PrismaMerchantOfferRepository implements MerchantOfferRepository {
   }
 
   async listActiveOffers(filter: {
-    merchantId: string;
+    merchantId?: string;
     productId?: string;
   }): Promise<OfferModel[]> {
     const rows = await this.prisma.offer.findMany({
       where: {
         active: true,
         ...(filter.productId ? { productId: filter.productId } : {}),
-        product: { merchantId: filter.merchantId },
+        product: {
+          active: true,
+          ...(filter.merchantId ? { merchantId: filter.merchantId } : {}),
+        },
       },
     });
     return rows.map(toOfferModel);
@@ -189,14 +192,17 @@ export class InMemoryMerchantOfferRepository implements MerchantOfferRepository 
   }
 
   async listActiveOffers(filter: {
-    merchantId: string;
+    merchantId?: string;
     productId?: string;
   }): Promise<OfferModel[]> {
     return this.data.offers.filter((o) => {
       if (!o.active) return false;
       if (filter.productId && o.productId !== filter.productId) return false;
-      const product = this.data.products.find((p) => p.id === o.productId);
-      return product?.merchantId === filter.merchantId;
+      if (filter.merchantId) {
+        const product = this.data.products.find((p) => p.id === o.productId);
+        return product?.merchantId === filter.merchantId;
+      }
+      return true;
     });
   }
 

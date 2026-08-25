@@ -40,7 +40,7 @@ export function setIntentProvider(provider: LLMProvider | null): void {
 export function getIntentEngine(): IntentEngine {
   if (providerOverride) return new IntentEngine(providerOverride);
   if (!engineSingleton) {
-    engineSingleton = new IntentEngine(new RealLLMProvider());
+    engineSingleton = new IntentEngine(new MockLLMProvider());
   }
   return engineSingleton;
 }

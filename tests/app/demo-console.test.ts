@@ -4,6 +4,7 @@ vi.mock("@/lib/db", () => {
   const prisma = {
     merchant: {
       upsert: vi.fn().mockResolvedValue({ id: "m_interviewforge" }),
+      updateMany: vi.fn().mockResolvedValue({ count: 1 }),
     },
     product: {
       upsert: vi.fn().mockResolvedValue({ id: "p_sysdesign" }),

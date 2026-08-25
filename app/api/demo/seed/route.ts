@@ -9,6 +9,11 @@ export async function POST() {
     const seedData = buildInterviewForgeData();
 
     // 1. Merchant
+    await prisma.merchant.updateMany({
+      where: { id: { not: "m_interviewforge" } },
+      data: { status: "INACTIVE" },
+    });
+
     for (const m of seedData.merchants) {
       await prisma.merchant.upsert({
         where: { id: m.id },

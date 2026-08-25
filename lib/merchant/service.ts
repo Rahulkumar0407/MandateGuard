@@ -76,13 +76,13 @@ export class MerchantOfferService {
 
     return {
       id: offer.id,
-        product: {
-          id: product.id,
-          name: product.name,
-          slug: product.slug,
-          category: product.category,
-          merchantId: product.merchantId,
-        },
+      product: {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        category: product.category,
+        merchantId: product.merchantId,
+      },
       version: offer.version,
       name: offer.name,
       description: offer.description,
