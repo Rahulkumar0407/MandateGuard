@@ -4,6 +4,7 @@ import {
   getSubscription as realGetSubscription,
   pauseSubscription as realPauseSubscription,
   resumeSubscription as realResumeSubscription,
+  cancelSubscription as realCancelSubscription,
 } from "./subscriptions";
 import type {
   CreatePlanInput,
@@ -22,6 +23,7 @@ export interface RazorpayGateway {
   getSubscription(id: string): Promise<RazorpaySubscription>;
   pauseSubscription(id: string): Promise<RazorpaySubscription>;
   resumeSubscription(id: string): Promise<RazorpaySubscription>;
+  cancelSubscription(id: string): Promise<RazorpaySubscription>;
 }
 
 class RealRazorpayGateway implements RazorpayGateway {
@@ -30,6 +32,7 @@ class RealRazorpayGateway implements RazorpayGateway {
   getSubscription = realGetSubscription;
   pauseSubscription = realPauseSubscription;
   resumeSubscription = realResumeSubscription;
+  cancelSubscription = realCancelSubscription;
 }
 
 // In-memory gateway for tests. It tracks created entities so get/pause/resume
@@ -105,6 +108,16 @@ export class MockRazorpayGateway implements RazorpayGateway {
     const sub = this.subscriptions.get(id);
     if (!sub) throw new Error(`Razorpay subscription ${id} not found`);
     sub.status = "active";
+    return { ...sub };
+  }
+
+  async cancelSubscription(id: string): Promise<RazorpaySubscription> {
+    this.maybeFail();
+    const sub = this.subscriptions.get(id);
+    if (!sub) throw new Error(`Razorpay subscription ${id} not found`);
+    sub.status = "cancelled";
+    // Terminate the provider entity: remove it so it cannot be resumed/billed.
+    this.subscriptions.delete(id);
     return { ...sub };
   }
 }

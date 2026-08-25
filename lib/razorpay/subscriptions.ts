@@ -73,6 +73,22 @@ export async function getSubscription(subscriptionId: string): Promise<RazorpayS
   };
 }
 
+export async function cancelSubscription(subscriptionId: string): Promise<RazorpaySubscription> {
+  const razorpay = getRazorpay();
+  // Immediately terminate the subscription (cancelAtCycleEnd = false). This is
+  // the correct compensation for an orphaned, never-authenticated subscription:
+  // it ends the provider billing relationship instead of merely suspending it.
+  const sub = await razorpay.subscriptions.cancel(subscriptionId, false);
+
+  return {
+    id: sub.id,
+    planId: sub.plan_id,
+    status: sub.status,
+    shortUrl: sub.short_url,
+    totalCount: sub.total_count,
+  };
+}
+
 export async function pauseSubscription(subscriptionId: string): Promise<RazorpaySubscription> {
   const razorpay = getRazorpay();
   const sub = await razorpay.subscriptions.pause(subscriptionId, { pause_at: "now" });

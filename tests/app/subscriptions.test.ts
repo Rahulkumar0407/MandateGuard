@@ -116,6 +116,73 @@ describe("POST /api/subscriptions — validation", () => {
     const data = await res.json();
     expect(JSON.stringify(data)).not.toMatch(/RAZORPAY_KEY_SECRET/);
   });
+
+  it("attempts compensation and logs diagnostics when local DB insert fails after provider success", async () => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleInfoSpy = vi.spyOn(console, "info").mockImplementation(() => {});
+    const cancelSpy = vi.spyOn(gateway, "cancelSubscription");
+
+    db.subscription.create.mockRejectedValueOnce(new Error("Supabase pooler timeout"));
+
+    const res = await createPOST(
+      json({
+        planName: "System Design Pro",
+        amount: 349900,
+        currency: "INR",
+        interval: "monthly",
+      }),
+    );
+
+    expect(res.status).toBe(502);
+    const data = await res.json();
+    expect(data.error).toBe("Failed to create subscription with Razorpay.");
+
+    // Provider subscription ID was created and passed to compensation
+    expect(cancelSpy).toHaveBeenCalledTimes(1);
+    expect(cancelSpy).toHaveBeenCalledWith(expect.stringMatching(/^sub_\d+$/));
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/\[Subscription Provisioning Failure\] .* Orphaned Razorpay subscription ID: sub_\d+/),
+    );
+    expect(consoleInfoSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/\[Subscription Compensation Succeeded\] Cancelled orphaned Razorpay subscription ID: sub_\d+/),
+    );
+
+    consoleErrorSpy.mockRestore();
+    consoleInfoSpy.mockRestore();
+  });
+
+  it("preserves orphaned subscription observability when compensation also fails", async () => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(gateway, "cancelSubscription").mockRejectedValueOnce(
+      new Error("Razorpay compensation timeout with secret RAZORPAY_SECRET_123"),
+    );
+
+    db.subscription.create.mockRejectedValueOnce(new Error("DB error"));
+
+    const res = await createPOST(
+      json({
+        planName: "System Design Pro",
+        amount: 349900,
+        currency: "INR",
+        interval: "monthly",
+      }),
+    );
+
+    expect(res.status).toBe(502);
+    const data = await res.json();
+    expect(data.error).toBe("Failed to create subscription with Razorpay.");
+    expect(JSON.stringify(data)).not.toMatch(/RAZORPAY_SECRET_123/);
+
+    // Diagnostics still capture both provisioning failure and compensation failure
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/\[Subscription Provisioning Failure\] .* Orphaned Razorpay subscription ID: sub_\d+/),
+    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringMatching(/\[Subscription Compensation Failed\] Failed to cancel orphaned Razorpay subscription ID: sub_\d+. Manual reconciliation may be required\./),
+    );
+
+    consoleErrorSpy.mockRestore();
+  });
 });
 
 describe("POST /api/subscriptions/:id/pause — safety", () => {

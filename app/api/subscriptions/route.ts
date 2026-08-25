@@ -38,6 +38,7 @@ export async function POST(req: Request) {
   const data = parsed.data;
 
   const gateway = getGateway();
+  let createdSubscriptionId: string | null = null;
   try {
     const plan = await gateway.createPlan({
       name: data.planName,
@@ -53,6 +54,7 @@ export async function POST(req: Request) {
       customerNotify: true,
       notes: { source: "mandateguard-m0" },
     });
+    createdSubscriptionId = subscription.id;
 
     const record = await prisma.subscription.create({
       data: {
@@ -82,6 +84,21 @@ export async function POST(req: Request) {
       { status: 201 },
     );
   } catch {
+    if (createdSubscriptionId) {
+      console.error(
+        `[Subscription Provisioning Failure] Local DB insert failed after Razorpay subscription creation. Orphaned Razorpay subscription ID: ${createdSubscriptionId}`,
+      );
+      try {
+        await gateway.cancelSubscription(createdSubscriptionId);
+        console.info(
+          `[Subscription Compensation Succeeded] Cancelled orphaned Razorpay subscription ID: ${createdSubscriptionId}`,
+        );
+      } catch {
+        console.error(
+          `[Subscription Compensation Failed] Failed to cancel orphaned Razorpay subscription ID: ${createdSubscriptionId}. Manual reconciliation may be required.`,
+        );
+      }
+    }
     // Do not leak raw SDK/provider errors (they may contain sensitive data).
     return NextResponse.json(
       { error: "Failed to create subscription with Razorpay." },

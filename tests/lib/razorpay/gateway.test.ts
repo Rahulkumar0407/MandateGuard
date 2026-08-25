@@ -59,6 +59,20 @@ describe("MockRazorpayGateway", () => {
     await expect(g.pauseSubscription("sub_missing")).rejects.toThrow();
   });
 
+  it("cancel terminates an existing subscription and removes it", async () => {
+    const g = new MockRazorpayGateway();
+    const sub = await g.createSubscription({ planId: "plan_1" });
+    const cancelled = await g.cancelSubscription(sub.id);
+    expect(cancelled.status).toBe("cancelled");
+    // Provider entity is terminated: no longer resolvable.
+    await expect(g.getSubscription(sub.id)).rejects.toThrow();
+  });
+
+  it("throws when cancelling an unknown subscription", async () => {
+    const g = new MockRazorpayGateway();
+    await expect(g.cancelSubscription("sub_missing")).rejects.toThrow();
+  });
+
   it("fails the next call when failNext is set", async () => {
     const g = new MockRazorpayGateway();
     g.failNext = true;
