@@ -107,7 +107,9 @@ export class MerchantOfferService {
   async getOffer(offerId: string): Promise<OfferDetailDTO | null> {
     const merchant = await this.repo.getActiveMerchant();
     if (!merchant) return null;
-    const offer = await this.repo.getActiveOfferById(offerId);
+    const offer =
+      (await this.repo.getActiveOfferById(offerId)) ??
+      (await this.repo.getOfferById(offerId));
     if (!offer) return null;
     const product = await this.repo.getProductById(offer.productId);
     // Enforce merchant isolation: an orphaned/foreign offer is not discoverable.
