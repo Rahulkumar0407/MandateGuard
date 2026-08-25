@@ -153,7 +153,7 @@ export class ReauthorizationService {
           decisionAction: null,
           newEnvelopeId: null,
           expiresAt: new Date(Date.now() + 14 * 86400000).toISOString(),
-          createdAt: envelope.createdAt.toISOString(),
+          createdAt: String(envelope.createdAt),
           updatedAt: new Date().toISOString(),
         };
         await this.repo.createRequest(request);
