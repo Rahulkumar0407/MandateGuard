@@ -13,10 +13,19 @@ export interface ReauthorizationRepository {
   ): Promise<ReauthorizationRequest>;
 }
 
+const globalForReauth = globalThis as unknown as {
+  __mandateguard_reauth_map?: Map<string, ReauthorizationRequest>;
+};
+
 export class InMemoryReauthorizationRepository
   implements ReauthorizationRepository
 {
-  private requests = new Map<string, ReauthorizationRequest>();
+  private get requests(): Map<string, ReauthorizationRequest> {
+    if (!globalForReauth.__mandateguard_reauth_map) {
+      globalForReauth.__mandateguard_reauth_map = new Map();
+    }
+    return globalForReauth.__mandateguard_reauth_map;
+  }
 
   async createRequest(
     request: ReauthorizationRequest,
