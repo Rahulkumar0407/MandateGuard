@@ -137,9 +137,11 @@ export class MerchantPreviewService {
       await this.envelopeService.listActiveEnvelopesByMerchant(merchantId);
 
     const productOfferIds = new Set(productOffers.map((o) => o.id));
+    const productBase = input.productId.replace(/^p_/, "");
     const lineageEnvelopes = activeEnvelopes.filter(
       (env) =>
         productOfferIds.has(env.authorizedOfferVersionId) ||
+        env.authorizedOfferVersionId.includes(productBase) ||
         productOffers.length === 0,
     );
 
