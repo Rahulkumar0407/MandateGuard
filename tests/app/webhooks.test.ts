@@ -28,10 +28,12 @@ import { prisma } from "@/lib/db";
 
 const SECRET = "test-webhook-secret";
 
-function signedRequest(body: unknown, signature: string): Request {
+function signedRequest(body: unknown, signature: string, eventId?: string): Request {
+  const headers: Record<string, string> = { "x-razorpay-signature": signature };
+  if (eventId) headers["x-razorpay-event-id"] = eventId;
   return new Request("http://localhost/api/webhooks/razorpay", {
     method: "POST",
-    headers: { "x-razorpay-signature": signature },
+    headers,
     body: JSON.stringify(body),
   });
 }
@@ -121,6 +123,44 @@ describe("POST /api/webhooks/razorpay — deduplication", () => {
     expect(ra.status).toBe(200);
     expect(rb.status).toBe(200);
     expect(db.webhookEvent.create).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("POST /api/webhooks/razorpay — provider event id deduplication", () => {
+  it("uses the provider event id as the dedup key when present", async () => {
+    const body = payload("subscription.activated", "sub_1");
+    const res = await POST(signedRequest(body, sign(JSON.stringify(body)), "evt_123"));
+    expect(res.status).toBe(200);
+    expect(db.webhookEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ razorpayEventId: "evt_123" }),
+      }),
+    );
+  });
+
+  it("deduplicates repeated delivery of the same provider event id", async () => {
+    const body = payload("subscription.paused", "sub_1");
+    const sig = sign(JSON.stringify(body));
+    const first = await POST(signedRequest(body, sig, "evt_dup_1"));
+    expect(first.status).toBe(200);
+    expect(db.webhookEvent.create).toHaveBeenCalledTimes(1);
+
+    db.webhookEvent.findUnique.mockResolvedValueOnce({ id: "existing" });
+    const second = await POST(signedRequest(body, sig, "evt_dup_1"));
+    const json = await second.json();
+    expect(json.duplicate).toBe(true);
+    expect(db.webhookEvent.create).toHaveBeenCalledTimes(1);
+  });
+
+  it("falls back to the synthetic key when the provider event id is absent", async () => {
+    const body = payload("subscription.activated", "sub_FB");
+    const res = await POST(signedRequest(body, sign(JSON.stringify(body))));
+    expect(res.status).toBe(200);
+    expect(db.webhookEvent.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ razorpayEventId: "subscription.activated:sub_FB" }),
+      }),
+    );
   });
 });
 

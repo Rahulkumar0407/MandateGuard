@@ -39,7 +39,14 @@ export async function POST(req: Request) {
   const eventType = typeof payload.event === "string" ? payload.event : "";
   const razorpaySubId = payload.payload?.subscription?.entity?.id;
 
-  const dedupKey = buildWebhookDedupKey({ event: eventType, payload: payload.payload });
+  // Razorpay sends a canonical, globally-unique event id in the
+  // `X-Razorpay-Event-Id` header. Prefer it as the deduplication key; fall
+  // back to the body-derived key when the header is absent.
+  const providerEventId = req.headers.get("x-razorpay-event-id") ?? undefined;
+  const dedupKey = buildWebhookDedupKey(
+    { event: eventType, payload: payload.payload },
+    providerEventId,
+  );
 
   const existing = await prisma.webhookEvent.findUnique({
     where: { razorpayEventId: dedupKey },

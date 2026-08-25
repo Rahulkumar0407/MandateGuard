@@ -69,6 +69,41 @@ describe("buildWebhookDedupKey", () => {
     expect(buildWebhookDedupKey(payload)).toBe(buildWebhookDedupKey(payload));
   });
 
+  it("prefers the provider event id as the dedup key when present", () => {
+    const key = buildWebhookDedupKey(
+      {
+        event: "subscription.charged",
+        payload: {
+          payment: { entity: { id: "pay_123" } },
+          subscription: { entity: { id: "sub_123" } },
+        },
+      },
+      "evt_123",
+    );
+    expect(key).toBe("evt_123");
+  });
+
+  it("treats the same provider event id as identical (idempotency)", () => {
+    const payload = {
+      event: "subscription.charged",
+      payload: { payment: { entity: { id: "pay_123" } } },
+    };
+    expect(buildWebhookDedupKey(payload, "evt_abc")).toBe(
+      buildWebhookDedupKey(payload, "evt_abc"),
+    );
+  });
+
+  it("falls back to the synthetic key when the provider event id is empty", () => {
+    const key = buildWebhookDedupKey(
+      {
+        event: "subscription.paused",
+        payload: { subscription: { entity: { id: "sub_456" } } },
+      },
+      "",
+    );
+    expect(key).toBe("subscription.paused:sub_456");
+  });
+
   it("produces different keys for distinct charges on the same subscription", () => {
     const a = buildWebhookDedupKey({
       event: "subscription.charged",

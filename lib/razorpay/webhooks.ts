@@ -25,15 +25,27 @@ export function verifyWebhookSignature(
 }
 
 // Build a stable, unique key for a webhook delivery so processing is
-// idempotent. Razorpay does not include a global event id in the body, so we
-// combine the event type with the most specific entity id available.
-export function buildWebhookDedupKey(payload: {
-  event: string;
-  payload?: {
-    payment?: { entity?: { id?: string } };
-    subscription?: { entity?: { id?: string } };
-  };
-}): string {
+// idempotent.
+//
+// Preferred key: the provider's canonical event id, delivered by Razorpay as the
+// `X-Razorpay-Event-Id` header. It is globally unique per event and is the
+// safest idempotency key for deduplication.
+//
+// Fallback key (when the provider event id is unavailable, e.g. an environment
+// that does not forward the header): combine the event type with the most
+// specific entity id available in the body. This preserves the previous
+// behaviour exactly for those cases.
+export function buildWebhookDedupKey(
+  payload: {
+    event: string;
+    payload?: {
+      payment?: { entity?: { id?: string } };
+      subscription?: { entity?: { id?: string } };
+    };
+  },
+  eventId?: string,
+): string {
+  if (eventId) return eventId;
   const paymentId = payload.payload?.payment?.entity?.id;
   const subscriptionId = payload.payload?.subscription?.entity?.id;
   return `${payload.event}:${paymentId ?? subscriptionId ?? "unknown"}`;
