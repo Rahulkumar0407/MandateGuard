@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MandateGuard
 
-## Getting Started
+> **AI reasons. MandateGuard authorizes. Razorpay executes.**
 
-First, run the development server:
+MandateGuard is an AI-powered recurring-commerce protection layer being built
+for the Razorpay AI Buildathon — **Track 01: AI Growth & Agentic Commerce**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This repository is being developed **milestone by milestone**.
+
+## Current Milestone — M0: Razorpay Subscription Skeleton
+
+The goal of M0 is to prove the Razorpay recurring-payment lifecycle **before**
+any AI, merchant-offer, or semantic-integrity logic is built:
+
+```
+Plan → Subscription → Authentication → Active → Webhook
+     → Successful simulated charge → Failed simulated charge
+     → Pause → Resume
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+M0 intentionally contains **no AI**, **no merchant offer system**, and **no
+Semantic Offer Integrity engine**. Those arrive in later milestones.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Next.js 16** (App Router) + **TypeScript**
+- **PostgreSQL** via **Prisma** (v6)
+- **Tailwind CSS**
+- **Razorpay Node SDK** (Test Mode) behind a server-side adapter
+- Server-side API routes (no client-side Razorpay secret usage)
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/
+  api/
+    subscriptions/
+      route.ts                 # POST: create plan + subscription
+      [id]/route.ts            # GET:  subscription state
+      [id]/pause/route.ts      # POST: pause
+      [id]/resume/route.ts     # POST: resume
+    webhooks/razorpay/route.ts # POST: verified, idempotent webhooks
+lib/
+  env.ts                       # server-only env access
+  db.ts                        # Prisma client singleton
+  razorpay/
+    client.ts                  # Razorpay client (credential-guarded)
+    types.ts                   # domain types
+    subscriptions.ts           # createPlan/createSubscription/... adapter
+    webhooks.ts                # signature verify + dedup key
+prisma/
+  schema.prisma                # minimal M0 schema
+tests/                         # pure-function unit tests (vitest)
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+npm install
+cp .env.example .env          # then fill in DATABASE_URL + Razorpay test keys
+npx prisma generate
+npx prisma migrate dev        # creates the M0 tables
+npm run dev
+```
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Script | Description |
+| --- | --- |
+| `npm run dev` | Start the Next.js dev server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` | Run unit tests (vitest) |
+| `npm run db:generate` | Generate Prisma client |
+| `npm run db:migrate` | Run Prisma migrations |
+| `npm run db:studio` | Open Prisma Studio |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Security notes (Razorpay)
+
+- `RAZORPAY_KEY_SECRET` and `RAZORPAY_WEBHOOK_SECRET` are **server-only**.
+- Webhook payloads are **signature-verified** and processed **idempotently**.
+- Razorpay subscription state is treated as **authoritative**; frontend
+  success state is never treated as payment truth.

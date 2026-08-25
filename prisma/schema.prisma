@@ -1,0 +1,257 @@
+// MandateGuard — Prisma schema (M0: Razorpay Subscription Skeleton)
+//
+// Only the entities required for the M0 lifecycle are modelled here.
+// Final schema (users, merchants, products, offers, mandates,
+// integrity_audits, audit_events) will be introduced in later milestones.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  // Razorpay identifiers
+  razorpayPlanId       String?   @unique
+  razorpaySubscriptionId String? @unique
+  // Authorized offer snapshot (minimal for M0)
+  planName             String
+  amount               Int // amount in smallest currency unit (paise)
+  currency             String    @default("INR")
+  interval             String    @default("monthly") // daily | weekly | monthly | yearly
+  intervalCount        Int       @default(1)
+  totalCount           Int       @default(12)
+  // Lifecycle state mirrors Razorpay subscription status
+  status               String    @default("created") // created | authenticated | active | paused | cancelled | expired | halted
+  customerEmail        String?
+  customerContact      String?
+  shortUrl             String? // Razorpay hosted auth page
+  // Bookkeeping
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  webhookEvents        WebhookEvent[]
+}
+
+// Idempotency / dedup table for Razorpay webhook delivery.
+model WebhookEvent {
+  id                   String   @id @default(cuid())
+  razorpayEventId      String   @unique // webhook "event" id, used for dedup
+  eventType            String
+  subscriptionId       String?
+  payload              Json
+  processedAt          DateTime @default(now())
+
+  subscription         Subscription? @relation(fields: [subscriptionId], references: [id])
+}
+
+// ---------------------------------------------------------------------------
+// M1: Merchant Commerce API
+//
+// Merchant Offers are kept strictly separate from Razorpay Plans/Subscriptions.
+// The eventual flow is:
+//   Merchant Offer -> Authorized Offer Snapshot -> MandateGuard Subscription
+//   -> Razorpay Subscription
+// No Razorpay coupling exists at this layer.
+// ---------------------------------------------------------------------------
+
+model Merchant {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String
+  status      String   @default("ACTIVE") // ACTIVE | INACTIVE
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+  mandates Mandate[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  merchantId  String
+  merchant    Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  name        String
+  slug        String
+  description String
+  category    String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  offers Offer[]
+
+  @@unique([merchantId, slug])
+  @@index([merchantId])
+  @@index([category])
+}
+
+// Immutable-version offer. A material change creates a NEW version rather than
+// overwriting the meaning of an existing one. Integrity Engine later compares
+// authorized vs current versions.
+model Offer {
+  id               String   @id @default(cuid())
+  productId        String
+  product          Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  version          Int      @default(1)
+  name             String
+  description      String
+  price            Int // amount in smallest currency unit (paise)
+  currency         String   @default("INR")
+  billingInterval  String   @default("monthly") // daily | weekly | monthly | yearly
+  duration         Int // entitlement duration in days
+  entitlementKeys  String[] // structured, queryable list of entitlements
+  refundWindowDays Int // structured refund policy (days)
+  supportTerms     String // semantic/unstructured — data only, never executed
+  semanticTerms    String // semantic/unstructured — data only, never executed
+  active           Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([productId, version])
+  @@index([productId])
+  @@index([active])
+}
+
+// ---------------------------------------------------------------------------
+// M3: Authorized Offer Snapshot / Mandate
+//
+// The Mandate is the user's recurring AUTHORIZATION relationship. It is NOT the
+// Razorpay Subscription. At authorization time we freeze an IMMUTABLE copy of
+// the commercial facts (AuthorizedOfferSnapshot) so the future Integrity
+// Engine can compare the authorized state against the CURRENT merchant offer
+// without trusting a mutable Offer row.
+// ---------------------------------------------------------------------------
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mandates Mandate[]
+}
+
+model Mandate {
+  id                    String  @id @default(cuid())
+  userId                String
+  user                  User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  merchantId            String
+  merchant              Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  offerId               String
+  razorpaySubscriptionId String? // populated by the real Razorpay flow later (M0-B/M4)
+  status                String  @default("AUTHORIZED") // AUTHORIZED | CANCELLED
+  idempotencyKey        String? @unique
+  authorizedAt          DateTime @default(now())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  snapshot AuthorizedOfferSnapshot?
+
+  @@index([userId])
+  @@index([razorpaySubscriptionId])
+}
+
+// Immutable historical record of what the user actually authorized.
+model AuthorizedOfferSnapshot {
+  id                 String  @id @default(cuid())
+  mandateId          String  @unique
+  mandate            Mandate @relation(fields: [mandateId], references: [id], onDelete: Cascade)
+
+  // Version preservation: the authorized version is frozen permanently.
+  offerId            String
+  offerVersion       Int
+
+  // Frozen commercial facts (server-side, never client-supplied).
+  productId          String
+  productName        String
+  offerName          String
+  description        String
+  price              Int // paise
+  currency           String
+  billingInterval    String
+  duration           Int // days
+  entitlementKeys    String[]
+  refundWindowDays   Int
+  supportTerms       String // untrusted data — never executed
+  semanticTerms      String // untrusted data — never executed
+  snapshotCreatedAt  DateTime @default(now())
+}
+
+// ---------------------------------------------------------------------------
+// M7-A: Action Boundary + Audit Trail
+//
+// Two additions:
+//   1. AuditEvent   — append-only forensic record of what MandateGuard
+//                     evaluated, decided, attempted and observed.
+//   2. MandateAction — the deterministic action / idempotency boundary that
+//                     prevents the same decision from pausing the same
+//                     subscription more than once.
+//
+// Neither table stores secrets: no Razorpay key_id / key_secret, no webhook
+// secret, no LLM credentials, no raw provider payloads, no stack traces.
+// Neither table has a foreign key to Mandate on purpose: the audit trail must
+// survive independently of mutable operational rows (append-only history).
+// ---------------------------------------------------------------------------
+
+// Append-only. Nothing in the application updates or deletes an AuditEvent —
+// the repository interface exposes only append + read, and there is no
+// updatedAt column.
+model AuditEvent {
+  id                     String   @id @default(cuid())
+  mandateId              String
+  // INTEGRITY_EVALUATED | POLICY_DECIDED | ACTION_REQUESTED |
+  // ACTION_SUCCEEDED | ACTION_FAILED  (small, fixed taxonomy)
+  eventType              String
+  // Decision context, frozen at write time. These values MUST NOT be
+  // recomputed later: the historical record cannot change when the merchant
+  // publishes a new Offer version.
+  policyVersion          String?
+  baselineOfferVersion   Int?
+  currentOfferVersion    Int?
+  decision               String? // ALLOW | REVIEW | PAUSE
+  action                 String? // NO_ACTION | REVIEW_REQUIRED | PAUSE_SUBSCRIPTION
+  status                 String? // NOT_REQUIRED | PENDING | SUCCEEDED | FAILED | BLOCKED
+  reason                 String? // machine-readable reason code
+  // Provider identifier only (never a secret / never credentials).
+  providerSubscriptionId String?
+  // Deterministic idempotency key of the related action, when applicable.
+  actionKey              String?
+  // Structured extras (finding types, generated explanations, thresholds).
+  metadata               Json?
+  createdAt              DateTime @default(now())
+
+  @@index([mandateId, createdAt])
+  @@index([eventType])
+  @@index([actionKey])
+}
+
+// The action / idempotency boundary. `actionKey` is derived deterministically
+// from (mandateId, policyVersion, baselineOfferVersion, currentOfferVersion,
+// action); the unique constraint is what makes a repeated evaluation unable to
+// pause the same subscription twice.
+model MandateAction {
+  id                     String    @id @default(cuid())
+  mandateId              String
+  actionKey              String    @unique
+  action                 String // PAUSE_SUBSCRIPTION (only provider-affecting action in M7-A)
+  status                 String // PENDING | SUCCEEDED | FAILED
+  decision               String // policy decision that produced this action
+  policyVersion          String
+  baselineOfferVersion   Int
+  currentOfferVersion    Int?
+  providerSubscriptionId String?
+  reason                 String?
+  attemptCount           Int       @default(0)
+  executedAt             DateTime?
+  createdAt              DateTime  @default(now())
+  updatedAt              DateTime  @updatedAt
+
+  @@index([mandateId])
+  @@index([status])
+}
