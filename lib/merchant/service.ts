@@ -107,12 +107,45 @@ export class MerchantOfferService {
   async getOffer(offerId: string): Promise<OfferDetailDTO | null> {
     const merchant = await this.repo.getActiveMerchant();
     if (!merchant) return null;
-    const offer =
-      (await this.repo.getActiveOfferById(offerId)) ??
-      (await this.repo.getOfferById(offerId));
+    const offer = await this.repo.getActiveOfferById(offerId);
     if (!offer) return null;
     const product = await this.repo.getProductById(offer.productId);
     // Enforce merchant isolation: an orphaned/foreign offer is not discoverable.
+    if (!product || product.merchantId !== merchant.id) return null;
+
+    return {
+      id: offer.id,
+      product: {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        category: product.category,
+        merchantId: product.merchantId,
+      },
+      version: offer.version,
+      name: offer.name,
+      description: offer.description,
+      price: offer.price,
+      currency: offer.currency,
+      billingInterval: offer.billingInterval,
+      duration: offer.duration,
+      entitlementKeys: offer.entitlementKeys,
+      refundPolicy: { windowDays: offer.refundWindowDays },
+      supportTerms: offer.supportTerms,
+      semanticTerms: offer.semanticTerms,
+      structuredCommitments: offer.structuredCommitments,
+      isConfirmedByMerchant: offer.isConfirmedByMerchant,
+      versionHash: offer.versionHash,
+      availability: offer.active ? "ACTIVE" : "INACTIVE",
+    };
+  }
+
+  async getOfferById(offerId: string): Promise<OfferDetailDTO | null> {
+    const merchant = await this.repo.getActiveMerchant();
+    if (!merchant) return null;
+    const offer = await this.repo.getOfferById(offerId);
+    if (!offer) return null;
+    const product = await this.repo.getProductById(offer.productId);
     if (!product || product.merchantId !== merchant.id) return null;
 
     return {

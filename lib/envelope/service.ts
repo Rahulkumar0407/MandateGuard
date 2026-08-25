@@ -79,7 +79,9 @@ export class EnvelopeService {
   async createAuthorizationEnvelope(
     input: CreateEnvelopeInput,
   ): Promise<AuthorizationEnvelopeDTO> {
-    const offer = await this.merchant.getOffer(input.offerId);
+    const offer =
+      (await this.merchant.getOffer(input.offerId)) ??
+      (await this.merchant.getOfferById(input.offerId));
     if (!offer) {
       throw new EnvelopeError("Offer not found or not active.", 404);
     }

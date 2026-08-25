@@ -161,7 +161,19 @@ export const StructuredCommitmentsSchema = z.object({
 export function normalizeStructuredCommitments(
   raw: StructuredCommitments,
 ): StructuredCommitments {
-  const parsed = StructuredCommitmentsSchema.parse(raw);
+  const rawKeys = new Set(
+    (raw.entitlements?.keys ?? []).map((k) => k.trim().toLowerCase()),
+  );
+  const sanitizedRaw = {
+    ...raw,
+    entitlements: {
+      ...raw.entitlements,
+      criticalKeys: (raw.entitlements?.criticalKeys ?? []).filter((k) =>
+        rawKeys.has(k.trim().toLowerCase()),
+      ),
+    },
+  };
+  const parsed = StructuredCommitmentsSchema.parse(sanitizedRaw);
 
   const normalizedKeys = Array.from(
     new Set(parsed.entitlements.keys.map((k) => k.trim().toLowerCase())),
