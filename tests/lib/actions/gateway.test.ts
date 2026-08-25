@@ -90,3 +90,47 @@ describe("M7-A — real Razorpay boundary is not wired (STEP 12)", () => {
     expect(src).toContain("./gateway");
   });
 });
+
+// M8-B — LIVE_ACTIONS_ENABLED must be configurable ONLY via the exact env var
+// "true". The default and every other value MUST stay safely disabled.
+describe("LIVE_ACTIONS_ENABLED configuration gate", () => {
+  it("missing env var -> disabled", async () => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+    const mod = await import("@/lib/actions/gateway");
+    expect(mod.LIVE_ACTIONS_ENABLED).toBe(false);
+  });
+
+  it('env "false" -> disabled', async () => {
+    vi.stubEnv("LIVE_ACTIONS_ENABLED", "false");
+    vi.resetModules();
+    const mod = await import("@/lib/actions/gateway");
+    expect(mod.LIVE_ACTIONS_ENABLED).toBe(false);
+  });
+
+  it('env "true" -> enabled', async () => {
+    vi.stubEnv("LIVE_ACTIONS_ENABLED", "true");
+    vi.resetModules();
+    const mod = await import("@/lib/actions/gateway");
+    expect(mod.LIVE_ACTIONS_ENABLED).toBe(true);
+  });
+
+  it('env "TRUE" -> disabled (exact "true" required)', async () => {
+    vi.stubEnv("LIVE_ACTIONS_ENABLED", "TRUE");
+    vi.resetModules();
+    const mod = await import("@/lib/actions/gateway");
+    expect(mod.LIVE_ACTIONS_ENABLED).toBe(false);
+  });
+
+  it("arbitrary env value -> disabled", async () => {
+    vi.stubEnv("LIVE_ACTIONS_ENABLED", "yes-please");
+    vi.resetModules();
+    const mod = await import("@/lib/actions/gateway");
+    expect(mod.LIVE_ACTIONS_ENABLED).toBe(false);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+});

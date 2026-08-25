@@ -115,10 +115,13 @@ export class RealRazorpayActionGateway implements RazorpayActionGateway {
   }
 }
 
-// M7-A: hard-off. M7-B flips this seam (behind credentials + explicit config).
-// Typed as boolean (not the literal `false`) so the production branch below is
-// real, reviewable code rather than something the compiler erases.
-export const LIVE_ACTIONS_ENABLED: boolean = false;
+// M7-A: hard-off by default. M7-B flips this seam (behind credentials + explicit
+// config) by setting the LIVE_ACTIONS_ENABLED environment variable to the exact
+// string "true". Any other value — missing, "false", "TRUE", etc. — keeps the
+// safety gate closed. Typed as boolean so the production branch below is real,
+// reviewable code rather than something the compiler erases.
+export const LIVE_ACTIONS_ENABLED: boolean =
+  process.env.LIVE_ACTIONS_ENABLED === "true";
 
 let override: RazorpayActionGateway | null = null;
 let disabled: DisabledRazorpayActionGateway | null = null;
