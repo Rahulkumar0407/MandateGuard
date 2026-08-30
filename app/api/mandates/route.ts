@@ -1,6 +1,30 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getMandateService, MandateError } from "@/lib/mandate/service";
+import { prisma } from "@/lib/db";
+
+// GET /api/mandates
+// Lists recently authorized mandates for dashboard overviews
+export async function GET() {
+  try {
+    const mandates = await prisma.mandate.findMany({
+      include: { snapshot: true },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    });
+    return NextResponse.json({
+      mandates: mandates.map((m) => ({
+        id: m.id,
+        status: m.status,
+        userId: m.userId,
+        offerId: m.offerId,
+        createdAt: m.createdAt,
+      })),
+    });
+  } catch {
+    return NextResponse.json({ mandates: [] });
+  }
+}
 
 // POST /api/mandates
 // Explicit user authorization. The request only supplies intent (which offer

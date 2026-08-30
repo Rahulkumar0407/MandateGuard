@@ -102,3 +102,25 @@ export function evaluateResume(
       };
   }
 }
+
+/**
+ * Determines whether a webhook status update should be applied given the current local status.
+ * Prevents out-of-order or delayed webhooks from reverting terminal states (CANCELLED, HALTED).
+ */
+export function canApplyWebhookStatus(
+  currentStatus: LocalStatus | string | null | undefined,
+  targetStatus: LocalStatus,
+): boolean {
+  const current = normalizeStatus(currentStatus);
+  if (!current) return true;
+
+  // Terminal states cannot be reverted by out-of-order webhooks
+  if (current === "CANCELLED") {
+    return targetStatus === "CANCELLED";
+  }
+  if (current === "HALTED") {
+    return targetStatus === "HALTED" || targetStatus === "CANCELLED";
+  }
+
+  return true;
+}

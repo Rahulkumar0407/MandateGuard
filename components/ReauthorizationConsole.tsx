@@ -110,20 +110,20 @@ export function ReauthorizationConsole() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white animate-in fade-in duration-200">
       {/* Header Banner */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm">
+      <div className="bg-[#0D1527] border border-white/10 rounded-2xl p-6 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 px-2.5 py-0.5 rounded border border-indigo-200 dark:border-indigo-800">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#60A5FA] bg-[#0B5CFF]/15 px-2.5 py-0.5 rounded-full border border-[#0B5CFF]/30">
                 Reauthorization State Machine
               </span>
             </div>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white mt-1">
+            <h1 className="text-xl font-bold text-white mt-1">
               Deterministic Offer Migration & Reauthorization Hub
             </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-3xl">
+            <p className="text-xs text-slate-300 mt-1 max-w-3xl">
               When a merchant offer undergoes breaking or review-required
               changes, the Reauthorization State Machine safely orchestrates
               buyer acceptance without mutating historical baseline snapshots.
@@ -135,14 +135,14 @@ export function ReauthorizationConsole() {
       {/* State Transitions Reference Bar */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {[
-          { state: "ACTIVE", desc: "Baseline Protected", color: "border-emerald-300 bg-emerald-50 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800" },
-          { state: "MIGRATION_PENDING", desc: "Awaiting Decision", color: "border-amber-300 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-800" },
-          { state: "REAUTHORIZED", desc: "New Baseline Pinned", color: "border-blue-300 bg-blue-50 text-blue-800 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-800" },
-          { state: "DECLINED", desc: "Terms Rejected", color: "border-slate-300 bg-slate-50 text-slate-800 dark:bg-slate-800/60 dark:text-slate-300 dark:border-slate-700" },
-          { state: "PAUSED", desc: "Protection Halted", color: "border-rose-300 bg-rose-50 text-rose-800 dark:bg-rose-950/40 dark:text-rose-300 dark:border-rose-800" },
-          { state: "EXPIRED", desc: "Window Elapsed", color: "border-slate-300 bg-slate-50 text-slate-600 dark:bg-slate-800/40 dark:text-slate-400 dark:border-slate-700" },
+          { state: "ACTIVE", desc: "Baseline Protected", color: "border-emerald-500/40 bg-emerald-500/10 text-emerald-300" },
+          { state: "MIGRATION_PENDING", desc: "Awaiting Decision", color: "border-amber-500/40 bg-amber-500/10 text-amber-300" },
+          { state: "REAUTHORIZED", desc: "New Baseline Pinned", color: "border-blue-500/40 bg-blue-500/10 text-blue-300" },
+          { state: "DECLINED", desc: "Terms Rejected", color: "border-white/15 bg-white/5 text-slate-300" },
+          { state: "PAUSED", desc: "Protection Halted", color: "border-rose-500/40 bg-rose-500/10 text-rose-300" },
+          { state: "EXPIRED", desc: "Window Elapsed", color: "border-white/10 bg-black/30 text-slate-400" },
         ].map((item, idx) => (
-          <div key={idx} className={`p-3 rounded-lg border text-center ${item.color}`}>
+          <div key={idx} className={`p-3 rounded-xl border text-center ${item.color}`}>
             <div className="text-xs font-bold font-mono tracking-tight">{item.state}</div>
             <div className="text-[10px] mt-0.5 opacity-80">{item.desc}</div>
           </div>
@@ -150,32 +150,32 @@ export function ReauthorizationConsole() {
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 rounded-xl text-rose-700 dark:text-rose-300 text-sm">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs">
           <span className="font-semibold">Error:</span> {error}
         </div>
       )}
 
       {actionMessage && (
-        <div className="p-4 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-700 dark:text-emerald-300 text-sm">
+        <div className="p-4 bg-emerald-500/15 border border-emerald-500/40 rounded-xl text-emerald-300 text-xs">
           {actionMessage}
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left: Initiate Trigger */}
-        <div className="lg:col-span-5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm space-y-4">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="lg:col-span-5 bg-[#0D1527] border border-white/10 rounded-2xl p-6 shadow-xl space-y-4">
+          <h2 className="text-sm font-bold text-white border-b border-white/10 pb-3">
             Initiate Migration Workflow
           </h2>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-medium text-slate-300 mb-1">
               Select Active Authorization Envelope
             </label>
             <select
               value={envelopeId}
               onChange={(e) => setEnvelopeId(e.target.value)}
-              className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md p-2.5 text-slate-800 dark:text-slate-200 focus:ring-1 focus:ring-[#0066ff]"
+              className="w-full text-xs bg-black/40 border border-white/15 rounded-xl p-2.5 text-white focus:ring-1 focus:ring-[#0B5CFF]"
             >
               <option value="env_sub_demo_active_01">env_sub_demo_active_01 (User: Demo Buyer)</option>
               <option value="env_sub_demo_active_02">env_sub_demo_active_02 (User: Alice)</option>
@@ -184,14 +184,14 @@ export function ReauthorizationConsole() {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+            <label className="block text-xs font-medium text-slate-300 mb-1">
               Target Offer Version ID
             </label>
             <input
               type="text"
               value={targetOfferVersionId}
               onChange={(e) => setTargetOfferVersionId(e.target.value)}
-              className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md p-2.5 text-slate-800 dark:text-slate-200 font-mono focus:ring-1 focus:ring-[#0066ff]"
+              className="w-full text-xs bg-black/40 border border-white/15 rounded-xl p-2.5 text-white font-mono focus:ring-1 focus:ring-[#0B5CFF]"
             />
             <p className="text-[11px] text-slate-400 mt-1">
               Target version to migrate this envelope&rsquo;s baseline to
@@ -202,49 +202,49 @@ export function ReauthorizationConsole() {
             type="button"
             onClick={initiateReauthorization}
             disabled={isLoading}
-            className="w-full py-2.5 px-4 bg-[#0066ff] hover:bg-[#0052cc] text-white text-xs font-medium rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center space-x-1.5"
+            className="w-full py-2.5 px-4 bg-[#0B5CFF] hover:bg-[#004DE6] text-white text-xs font-bold rounded-xl transition-all shadow-[0_0_16px_rgba(11,92,255,0.3)] disabled:opacity-50 flex items-center justify-center space-x-1.5 mg-press"
           >
             <span>Trigger Migration State (MIGRATION_PENDING)</span>
           </button>
         </div>
 
         {/* Right: Active Reauthorization Request Details & Decision Hub */}
-        <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm space-y-5">
-          <h2 className="text-sm font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div className="lg:col-span-7 bg-[#0D1527] border border-white/10 rounded-2xl p-6 shadow-xl space-y-5">
+          <h2 className="text-sm font-bold text-white border-b border-white/10 pb-3">
             Active Reauthorization Request & Resolution Hub
           </h2>
 
           {!activeRequest ? (
-            <div className="p-8 text-center text-xs text-slate-500 dark:text-slate-400">
+            <div className="p-8 text-center text-xs text-slate-400">
               No active reauthorization request selected. Click &ldquo;Trigger
               Migration State&rdquo; to begin a workflow.
             </div>
           ) : (
             <div className="space-y-4 text-xs animate-fade-in">
-              <div className="grid grid-cols-2 gap-3 bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-lg">
+              <div className="grid grid-cols-2 gap-3 bg-white/5 p-3.5 rounded-xl border border-white/10">
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Request ID:</span>
-                  <div className="font-mono font-semibold text-slate-800 dark:text-slate-200 mt-0.5">
+                  <span className="text-slate-400">Request ID:</span>
+                  <div className="font-mono font-semibold text-white mt-0.5">
                     {activeRequest.id}
                   </div>
                 </div>
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Workflow State:</span>
+                  <span className="text-slate-400">Workflow State:</span>
                   <div className="mt-0.5">
-                    <span className="inline-flex items-center text-[11px] font-bold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/80 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-800 font-mono">
+                    <span className="inline-flex items-center text-[11px] font-bold text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/40 font-mono">
                       {activeRequest.state}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Target Offer Version:</span>
-                  <div className="font-mono font-medium text-slate-700 dark:text-slate-300 mt-0.5">
+                  <span className="text-slate-400">Target Offer Version:</span>
+                  <div className="font-mono font-medium text-slate-200 mt-0.5">
                     {activeRequest.targetOfferVersionId}
                   </div>
                 </div>
                 <div>
-                  <span className="text-slate-500 dark:text-slate-400">Compatibility Level:</span>
-                  <div className="font-medium text-rose-600 dark:text-rose-400 mt-0.5">
+                  <span className="text-slate-400">Compatibility Level:</span>
+                  <div className="font-medium text-rose-400 mt-0.5">
                     {activeRequest.compatibilityStatus}
                   </div>
                 </div>
@@ -252,8 +252,8 @@ export function ReauthorizationConsole() {
 
               {/* Decision Actions when MIGRATION_PENDING */}
               {activeRequest.state === "MIGRATION_PENDING" && (
-                <div className="space-y-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">
+                <div className="space-y-2.5 pt-2 border-t border-white/10">
+                  <div className="font-semibold text-white">
                     Select Reauthorization Resolution Action:
                   </div>
 
@@ -262,7 +262,7 @@ export function ReauthorizationConsole() {
                       type="button"
                       onClick={handleApprove}
                       disabled={isLoading}
-                      className="p-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium text-xs transition-colors flex flex-col items-center justify-center space-y-1"
+                      className="p-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs transition-all flex flex-col items-center justify-center space-y-1 shadow-sm mg-press"
                     >
                       <span>✓ Approve & Pin v2</span>
                       <span className="text-[10px] text-emerald-100 font-normal">
@@ -274,7 +274,7 @@ export function ReauthorizationConsole() {
                       type="button"
                       onClick={() => handleDecline("RETAIN_BASELINE")}
                       disabled={isLoading}
-                      className="p-3 bg-slate-700 hover:bg-slate-800 text-white rounded-lg font-medium text-xs transition-colors flex flex-col items-center justify-center space-y-1"
+                      className="p-3 bg-white/10 hover:bg-white/15 text-white rounded-xl font-bold text-xs border border-white/15 transition-all flex flex-col items-center justify-center space-y-1 mg-press"
                     >
                       <span>✕ Decline & Retain</span>
                       <span className="text-[10px] text-slate-300 font-normal">
@@ -286,10 +286,10 @@ export function ReauthorizationConsole() {
                       type="button"
                       onClick={() => handleDecline("PAUSE_SUBSCRIPTION")}
                       disabled={isLoading}
-                      className="p-3 bg-rose-700 hover:bg-rose-800 text-white rounded-lg font-medium text-xs transition-colors flex flex-col items-center justify-center space-y-1"
+                      className="p-3 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold text-xs transition-all flex flex-col items-center justify-center space-y-1 shadow-sm mg-press"
                     >
                       <span>⏸ Decline & Pause</span>
-                      <span className="text-[10px] text-rose-200 font-normal">
+                      <span className="text-[10px] text-rose-100 font-normal">
                         Pause Protection
                       </span>
                     </button>
@@ -298,8 +298,8 @@ export function ReauthorizationConsole() {
               )}
 
               {activeRequest.state === "REAUTHORIZED" && (
-                <div className="p-3.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-lg text-emerald-800 dark:text-emerald-300">
-                  <div className="font-semibold">✓ Reauthorization Completed</div>
+                <div className="p-3.5 bg-emerald-500/15 border border-emerald-500/40 rounded-xl text-emerald-300">
+                  <div className="font-bold">✓ Reauthorization Completed</div>
                   <p className="mt-1">
                     New baseline pinned with envelope ID: <span className="font-mono">{activeRequest.newEnvelopeId}</span>. Previous baseline retired without in-place mutation.
                   </p>
@@ -307,10 +307,10 @@ export function ReauthorizationConsole() {
               )}
 
               {activeRequest.state === "DECLINED" && (
-                <div className="p-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-200">
-                  <div className="font-semibold">Declined by User</div>
+                <div className="p-3.5 bg-white/5 border border-white/10 rounded-xl text-slate-300">
+                  <div className="font-bold">Declined by User</div>
                   <p className="mt-1">
-                    Decision action executed: <span className="font-mono font-semibold">{activeRequest.decisionAction}</span>.
+                    Decision action executed: <span className="font-mono font-semibold text-white">{activeRequest.decisionAction}</span>.
                   </p>
                 </div>
               )}

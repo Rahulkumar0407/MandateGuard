@@ -46,3 +46,17 @@ export {
   type ActionStatus,
   type ActionType,
 } from "./types";
+export {
+  CommerceMutationExecutor,
+  getCommerceMutationExecutor,
+  setCommerceMutationExecutor,
+  type FinancialMutationType,
+  type MutationStatus,
+  type MutationReasonCode,
+  type ProvisionSubscriptionPayload,
+  type LifecycleSubscriptionPayload,
+  type MutationPayload,
+  type MutationRequest,
+  type MutationResult,
+} from "./commerce-executor";
+

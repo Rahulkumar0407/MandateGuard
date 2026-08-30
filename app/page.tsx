@@ -1,5 +1,5 @@
-import { DemoConsole } from "@/components/DemoConsole";
+import { AppShell } from "@/components/AppShell";
 
 export default function Home() {
-  return <DemoConsole />;
+  return <AppShell />;
 }

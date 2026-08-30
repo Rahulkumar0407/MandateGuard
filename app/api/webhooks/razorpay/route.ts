@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { verifyWebhookSignature, buildWebhookDedupKey } from "@/lib/razorpay/webhooks";
 import { statusForEvent } from "@/lib/razorpay/status";
+import { canApplyWebhookStatus } from "@/lib/subscription/state";
 import { hasWebhookSecret } from "@/lib/env";
 
 type WebhookPayload = {
@@ -13,8 +14,8 @@ type WebhookPayload = {
 };
 
 // POST /api/webhooks/razorpay
-// Receives Razorpay subscription lifecycle events. Signature-verified and
-// idempotent (deduplicated via WebhookEvent record).
+// Receives Razorpay subscription lifecycle events. Signature-verified,
+// out-of-order protected, and idempotent (deduplicated via WebhookEvent record).
 export async function POST(req: Request) {
   if (!hasWebhookSecret()) {
     return NextResponse.json(
@@ -60,18 +61,46 @@ export async function POST(req: Request) {
   const targetStatus = statusForEvent(eventType);
 
   await prisma.$transaction(async (tx) => {
-    if (razorpaySubId && targetStatus) {
-      await tx.subscription.updateMany({
-        where: { razorpaySubscriptionId: razorpaySubId },
-        data: { status: targetStatus },
-      });
-    }
     const local = razorpaySubId
       ? await tx.subscription.findFirst({
           where: { razorpaySubscriptionId: razorpaySubId },
-          select: { id: true },
+          select: { id: true, status: true },
         })
       : null;
+
+    if (razorpaySubId && targetStatus) {
+      if (!local || canApplyWebhookStatus(local.status, targetStatus)) {
+        await tx.subscription.updateMany({
+          where: { razorpaySubscriptionId: razorpaySubId },
+          data: { status: targetStatus },
+        });
+        console.log(
+          JSON.stringify({
+            level: "info",
+            event: "WEBHOOK_STATUS_TRANSITION",
+            eventType,
+            subscriptionId: local?.id,
+            razorpaySubscriptionId: razorpaySubId,
+            fromStatus: local?.status ?? "NONE",
+            toStatus: targetStatus,
+            timestamp: new Date().toISOString(),
+          }),
+        );
+      } else {
+        console.log(
+          JSON.stringify({
+            level: "warn",
+            event: "OUT_OF_ORDER_WEBHOOK_IGNORED",
+            eventType,
+            subscriptionId: local?.id,
+            razorpaySubscriptionId: razorpaySubId,
+            currentStatus: local.status,
+            ignoredTargetStatus: targetStatus,
+            timestamp: new Date().toISOString(),
+          }),
+        );
+      }
+    }
 
     await tx.webhookEvent.create({
       data: {

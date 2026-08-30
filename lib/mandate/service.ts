@@ -79,7 +79,12 @@ export class MandateService {
   async getMandate(id: string): Promise<MandateWithSnapshot | null> {
     return this.repo.getMandateById(id);
   }
+
+  async getMandateByIdempotencyKey(key: string): Promise<MandateWithSnapshot | null> {
+    return this.repo.findByIdempotencyKey(key);
+  }
 }
+
 
 // Freeze the commercial facts from the server-loaded offer.
 function buildSnapshot(offer: OfferDetailDTO): SnapshotFields {

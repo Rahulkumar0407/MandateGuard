@@ -1,8 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { useTheme } from "./ThemeProvider";
 
-export type ViewTab = "merchant" | "agent" | "reauthorization" | "guided_demo";
+export type ViewTab =
+  | "home"
+  | "grow"
+  | "buy"
+  | "transactions"
+  | "customers"
+  | "protection"
+  | "developer";
 
 interface NavbarProps {
   activeTab: ViewTab;
@@ -10,6 +18,9 @@ interface NavbarProps {
   onSeedDemo: () => Promise<void>;
   isSeeding: boolean;
   seedMessage: string | null;
+  userName?: string;
+  onSignOut?: () => void;
+  onViewLanding?: () => void;
 }
 
 export function Navbar({
@@ -18,126 +29,515 @@ export function Navbar({
   onSeedDemo,
   isSeeding,
   seedMessage,
+  userName = "InterviewForge AI",
+  onSignOut,
+  onViewLanding,
 }: NavbarProps) {
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const { theme, toggleTheme } = useTheme();
+
+  const navItems: { id: ViewTab; label: string }[] = [
+    { id: "home", label: "Overview" },
+    { id: "grow", label: "AI Growth" },
+    { id: "buy", label: "AI Buyer" },
+    { id: "transactions", label: "Transactions" },
+    { id: "customers", label: "Customers" },
+    { id: "protection", label: "Protection" },
+    { id: "developer", label: "Developer" },
+  ];
+
   return (
-    <header className="bg-[#0c2340] border-b border-[#1b3a60] text-white sticky top-0 z-50 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo & Product Title */}
-          <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#0066ff] to-[#3395ff] flex items-center justify-center shadow-inner">
-              <svg
-                className="w-5 h-5 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+    <>
+      {/* ═══════════════════════════════════════════════════════
+          FLOATING FROSTED GLASS NAVIGATION BAR
+          Aceternity Floating Dock inspired — NOT enterprise admin
+          ═══════════════════════════════════════════════════════ */}
+      <header
+        style={{
+          position: "sticky",
+          top: "12px",
+          zIndex: 50,
+          margin: "0 auto",
+          maxWidth: "1120px",
+          padding: "0 16px",
+        }}
+      >
+        <div
+          style={{
+            background: "var(--mg-glass-2-bg)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid var(--mg-glass-2-border)",
+            borderRadius: "20px",
+            boxShadow: "var(--mg-glass-2-shadow)",
+            padding: "0 8px",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              height: "56px",
+              padding: "0 12px",
+            }}
+          >
+            {/* ─── Brand ─── */}
+            <button
+              onClick={() => onTabChange("home")}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              <div
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "10px",
+                  background: "linear-gradient(135deg, #0B5CFF, #004DE6)",
+                  color: "white",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 900,
+                  fontSize: "14px",
+                  boxShadow: "0 0 20px rgba(11, 92, 255, 0.35)",
+                  flexShrink: 0,
+                }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2.5}
-                  d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                />
-              </svg>
-            </div>
-            <div>
-              <div className="flex items-center space-x-2">
-                <span className="font-bold tracking-tight text-lg text-white">
+                M
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span
+                  style={{
+                    fontWeight: 800,
+                    fontSize: "14px",
+                    letterSpacing: "-0.02em",
+                    color: "var(--mg-text)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
                   MandateGuard
                 </span>
-                <span className="bg-[#1b3a60] text-[#3395ff] text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded border border-[#2b5280]">
-                  Razorpay Subscriptions
+                <span
+                  style={{
+                    fontSize: "9px",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.06em",
+                    color: "#10B981",
+                    background: "rgba(16, 185, 129, 0.12)",
+                    border: "1px solid rgba(16, 185, 129, 0.25)",
+                    padding: "2px 8px",
+                    borderRadius: "99px",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Razorpay Test Mode
                 </span>
               </div>
-              <p className="text-xs text-slate-300 hidden sm:block">
-                Semantic Commercial Integrity & Autonomous Agent Safeguards
-              </p>
+            </button>
+
+            {/* ─── Desktop Navigation Pills ─── */}
+            <nav
+              className="hidden md:flex"
+              style={{
+                alignItems: "center",
+                gap: "2px",
+                marginLeft: "16px",
+                marginRight: "auto",
+                paddingLeft: "16px",
+                borderLeft: "1px solid var(--mg-border)",
+              }}
+            >
+              {navItems.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => onTabChange(item.id)}
+                    style={{
+                      padding: "6px 14px",
+                      fontSize: "12px",
+                      fontWeight: isActive ? 700 : 500,
+                      borderRadius: "12px",
+                      border: "none",
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                      color: isActive ? "#0B5CFF" : "var(--mg-text-secondary)",
+                      background: isActive ? "rgba(11, 92, 255, 0.12)" : "transparent",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* ─── Right Controls ─── */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+              {/* Theme toggle */}
+              <button
+                onClick={toggleTheme}
+                title={`Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`}
+                aria-label="Toggle Theme"
+                style={{
+                  width: "34px",
+                  height: "34px",
+                  borderRadius: "10px",
+                  border: "1px solid var(--mg-border)",
+                  background: "var(--mg-surface-subtle)",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "all 0.15s ease",
+                }}
+              >
+                {theme === "dark" ? "☀️" : "🌙"}
+              </button>
+
+              {/* Reset Demo */}
+              <button
+                onClick={onSeedDemo}
+                disabled={isSeeding}
+                className="hidden sm:inline-flex"
+                style={{
+                  alignItems: "center",
+                  gap: "4px",
+                  padding: "6px 14px",
+                  borderRadius: "10px",
+                  border: "1px solid var(--mg-border)",
+                  background: "var(--mg-surface-subtle)",
+                  cursor: isSeeding ? "not-allowed" : "pointer",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: "var(--mg-text-secondary)",
+                  opacity: isSeeding ? 0.5 : 1,
+                  transition: "all 0.15s ease",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {isSeeding ? "Resetting..." : "Reset Demo"}
+              </button>
+
+              {seedMessage && (
+                <span
+                  className="hidden md:inline"
+                  style={{
+                    fontSize: "10px",
+                    fontWeight: 600,
+                    color: "#10B981",
+                    background: "rgba(16, 185, 129, 0.12)",
+                    border: "1px solid rgba(16, 185, 129, 0.25)",
+                    padding: "4px 10px",
+                    borderRadius: "8px",
+                  }}
+                >
+                  {seedMessage}
+                </span>
+              )}
+
+              {onViewLanding && (
+                <button
+                  onClick={onViewLanding}
+                  className="hidden lg:inline-flex"
+                  style={{
+                    padding: "6px 12px",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    color: "var(--mg-text-secondary)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    borderRadius: "10px",
+                    transition: "color 0.15s ease",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Product Story →
+                </button>
+              )}
+
+              {/* User Profile */}
+              <div style={{ position: "relative" }}>
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "4px 12px 4px 4px",
+                    borderRadius: "12px",
+                    border: "1px solid var(--mg-border)",
+                    background: "var(--mg-surface-subtle)",
+                    cursor: "pointer",
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "28px",
+                      height: "28px",
+                      borderRadius: "8px",
+                      background: "#0B5CFF",
+                      color: "white",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontWeight: 700,
+                      fontSize: "12px",
+                    }}
+                  >
+                    {userName.charAt(0)}
+                  </div>
+                  <span
+                    className="hidden sm:inline"
+                    style={{
+                      fontSize: "12px",
+                      fontWeight: 700,
+                      color: "var(--mg-text)",
+                      maxWidth: "120px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {userName}
+                  </span>
+                </button>
+
+                {showUserMenu && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      right: 0,
+                      marginTop: "8px",
+                      width: "220px",
+                      background: "var(--mg-bg-panel)",
+                      borderRadius: "16px",
+                      border: "1px solid var(--mg-border)",
+                      boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+                      padding: "8px 0",
+                      zIndex: 50,
+                      backdropFilter: "blur(20px)",
+                      WebkitBackdropFilter: "blur(20px)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        padding: "10px 16px",
+                        borderBottom: "1px solid var(--mg-border)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: "9px",
+                          fontWeight: 700,
+                          textTransform: "uppercase",
+                          letterSpacing: "0.06em",
+                          color: "var(--mg-text-muted)",
+                          display: "block",
+                        }}
+                      >
+                        Active Merchant
+                      </span>
+                      <span
+                        style={{
+                          fontSize: "12px",
+                          fontWeight: 700,
+                          color: "var(--mg-text)",
+                          display: "block",
+                          marginTop: "2px",
+                        }}
+                      >
+                        {userName}
+                      </span>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        onTabChange("developer");
+                        setShowUserMenu(false);
+                      }}
+                      style={{
+                        width: "100%",
+                        textAlign: "left",
+                        padding: "10px 16px",
+                        fontSize: "12px",
+                        fontWeight: 500,
+                        color: "var(--mg-text-secondary)",
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        transition: "color 0.15s ease",
+                      }}
+                    >
+                      <span>Developer Console</span>
+                      <span style={{ fontSize: "10px", fontFamily: "monospace", color: "var(--mg-text-muted)" }}>
+                        APIs
+                      </span>
+                    </button>
+
+                    {onSignOut && (
+                      <button
+                        onClick={() => {
+                          onSignOut();
+                          setShowUserMenu(false);
+                        }}
+                        style={{
+                          width: "100%",
+                          textAlign: "left",
+                          padding: "10px 16px",
+                          fontSize: "12px",
+                          fontWeight: 500,
+                          color: "#EF4444",
+                          background: "none",
+                          border: "none",
+                          borderTop: "1px solid var(--mg-border)",
+                          cursor: "pointer",
+                          transition: "color 0.15s ease",
+                        }}
+                      >
+                        Sign Out
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile menu toggle */}
+              <button
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="md:hidden"
+                style={{
+                  width: "34px",
+                  height: "34px",
+                  borderRadius: "10px",
+                  border: "1px solid var(--mg-border)",
+                  background: "var(--mg-surface-subtle)",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--mg-text-secondary)",
+                }}
+                aria-label="Toggle navigation menu"
+              >
+                {showMobileMenu ? "✕" : "☰"}
+              </button>
             </div>
           </div>
 
-          {/* Quick Seeder & Environment status */}
-          <div className="flex items-center space-x-3">
-            {seedMessage && (
-              <span className="text-xs text-emerald-400 font-medium hidden md:inline animate-fade-in">
-                {seedMessage}
-              </span>
-            )}
-            <button
-              onClick={onSeedDemo}
-              disabled={isSeeding}
-              className="inline-flex items-center text-xs font-medium bg-[#143257] hover:bg-[#1c4373] text-slate-200 border border-[#26538a] px-3 py-1.5 rounded-md transition-colors disabled:opacity-50"
+          {/* ─── Mobile Expanded Menu ─── */}
+          {showMobileMenu && (
+            <div
+              className="md:hidden"
+              style={{
+                borderTop: "1px solid var(--mg-border)",
+                padding: "8px",
+              }}
             >
-              <svg
-                className={`w-3.5 h-3.5 mr-1.5 text-[#3395ff] ${
-                  isSeeding ? "animate-spin" : ""
-                }`}
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
-              </svg>
-              {isSeeding ? "Seeding..." : "Reset Demo Catalog"}
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    onTabChange(item.id);
+                    setShowMobileMenu(false);
+                  }}
+                  style={{
+                    width: "100%",
+                    textAlign: "left",
+                    padding: "10px 14px",
+                    borderRadius: "12px",
+                    fontSize: "13px",
+                    fontWeight: activeTab === item.id ? 700 : 500,
+                    color: activeTab === item.id ? "#0B5CFF" : "var(--mg-text-secondary)",
+                    background: activeTab === item.id ? "rgba(11, 92, 255, 0.12)" : "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    display: "block",
+                    transition: "all 0.15s ease",
+                  }}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* ═══════════════════════════════════════════════════════
+          MOBILE BOTTOM DOCK — Quick tab access
+          ═══════════════════════════════════════════════════════ */}
+      <div
+        className="md:hidden"
+        style={{
+          position: "fixed",
+          bottom: "12px",
+          left: "12px",
+          right: "12px",
+          zIndex: 40,
+          background: "var(--mg-glass-2-bg)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)",
+          border: "1px solid var(--mg-glass-2-border)",
+          borderRadius: "18px",
+          boxShadow: "var(--mg-glass-2-shadow)",
+          padding: "6px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
+      >
+        {navItems.slice(0, 5).map((item) => {
+          const isActive = activeTab === item.id;
+          const icons: Record<string, string> = {
+            home: "⌂",
+            grow: "↗",
+            buy: "✦",
+            transactions: "⇄",
+            customers: "👥",
+          };
+          return (
+            <button
+              key={item.id}
+              onClick={() => onTabChange(item.id)}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "2px",
+                padding: "6px 10px",
+                borderRadius: "12px",
+                border: "none",
+                cursor: "pointer",
+                fontSize: "14px",
+                background: isActive ? "rgba(11, 92, 255, 0.12)" : "transparent",
+                color: isActive ? "#0B5CFF" : "var(--mg-text-secondary)",
+                fontWeight: isActive ? 700 : 500,
+                transition: "all 0.15s ease",
+              }}
+            >
+              <span>{icons[item.id] || "•"}</span>
+              <span style={{ fontSize: "9px", letterSpacing: "-0.01em" }}>{item.label}</span>
             </button>
-          </div>
-        </div>
-
-        {/* Tab Navigation */}
-        <div className="flex space-x-1 sm:space-x-4 border-t border-[#1b3a60]/60 pt-1 -mb-px overflow-x-auto">
-          <button
-            onClick={() => onTabChange("guided_demo")}
-            className={`py-2 px-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
-              activeTab === "guided_demo"
-                ? "border-[#3395ff] text-white"
-                : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500"
-            }`}
-          >
-            <span>⚡</span>
-            <span>Interactive Guided Demo</span>
-          </button>
-
-          <button
-            onClick={() => onTabChange("merchant")}
-            className={`py-2 px-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
-              activeTab === "merchant"
-                ? "border-[#3395ff] text-white"
-                : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500"
-            }`}
-          >
-            <span>🏢</span>
-            <span>Merchant Offer Studio & Impact Preview</span>
-          </button>
-
-          <button
-            onClick={() => onTabChange("agent")}
-            className={`py-2 px-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
-              activeTab === "agent"
-                ? "border-[#3395ff] text-white"
-                : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500"
-            }`}
-          >
-            <span>🛡️</span>
-            <span>Subscriber & Autonomous Agent Shield</span>
-          </button>
-
-          <button
-            onClick={() => onTabChange("reauthorization")}
-            className={`py-2 px-3 text-xs sm:text-sm font-medium border-b-2 whitespace-nowrap transition-colors flex items-center space-x-1.5 ${
-              activeTab === "reauthorization"
-                ? "border-[#3395ff] text-white"
-                : "border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-500"
-            }`}
-          >
-            <span>🔄</span>
-            <span>Reauthorization State Machine</span>
-          </button>
-        </div>
+          );
+        })}
       </div>
-    </header>
+    </>
   );
 }

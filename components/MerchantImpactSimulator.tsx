@@ -123,23 +123,23 @@ export function MerchantImpactSimulator() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white animate-in fade-in duration-200">
       {/* Header Banner */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm">
+      <div className="bg-[#0D1527] border border-white/10 rounded-2xl p-6 shadow-xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#0066ff] bg-blue-50 dark:bg-blue-950/50 px-2.5 py-0.5 rounded border border-blue-200 dark:border-blue-800">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#60A5FA] bg-[#0B5CFF]/15 px-2.5 py-0.5 rounded-full border border-[#0B5CFF]/30">
                 Merchant Offer Studio
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400">
+              <span className="text-xs text-slate-400">
                 Product: System Design Mastery
               </span>
             </div>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-white mt-1">
+            <h1 className="text-xl font-bold text-white mt-1">
               Pre-Publish Offer Compatibility & Impact Simulation
             </h1>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-3xl">
+            <p className="text-xs text-slate-300 mt-1 max-w-3xl">
               Simulate proposed changes to pricing, entitlements, or support
               terms against your existing subscribers’ authorized envelopes
               before publishing.
@@ -147,18 +147,18 @@ export function MerchantImpactSimulator() {
           </div>
 
           {/* Current Active Baseline snapshot */}
-          <div className="bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg p-4 text-xs space-y-1">
-            <div className="font-semibold text-slate-700 dark:text-slate-200">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-4 text-xs space-y-1">
+            <div className="font-semibold text-white">
               Current Active Published Version (v1)
             </div>
-            <div className="text-slate-500 dark:text-slate-400">
-              Price: <span className="font-medium text-slate-900 dark:text-white">₹3,499 / mo</span>
+            <div className="text-slate-300">
+              Price: <span className="font-bold text-white">₹3,499 / mo</span>
             </div>
-            <div className="text-slate-500 dark:text-slate-400">
-              Support: <span className="font-medium text-emerald-600 dark:text-emerald-400">Dedicated Mentor (4 sessions/mo)</span>
+            <div className="text-slate-300">
+              Support: <span className="font-medium text-emerald-400">Dedicated Mentor (4 sessions/mo)</span>
             </div>
-            <div className="text-slate-500 dark:text-slate-400">
-              Refund: <span className="font-medium">30 Days</span>
+            <div className="text-slate-300">
+              Refund: <span className="font-medium text-white">30 Days</span>
             </div>
           </div>
         </div>
@@ -168,35 +168,35 @@ export function MerchantImpactSimulator() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Proposed Change Configurator (5 cols) */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm space-y-5">
-            <h2 className="text-base font-semibold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">
+          <div className="bg-[#0D1527] border border-white/10 rounded-2xl p-6 shadow-xl space-y-5">
+            <h2 className="text-sm font-bold text-white border-b border-white/10 pb-3">
               1. Configure Proposed Version (v2 Candidate)
             </h2>
 
             {/* Quick Presets */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+              <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
                 Quick Simulation Scenarios
               </label>
               <div className="grid grid-cols-1 gap-2">
                 <button
                   type="button"
                   onClick={() => applyScenario("preset_compatible")}
-                  className={`text-left text-xs p-3 rounded-lg border transition-all ${
+                  className={`text-left text-xs p-3 rounded-xl border transition-all ${
                     candidateScenario === "preset_compatible"
-                      ? "border-[#0066ff] bg-blue-50/50 dark:bg-blue-950/30 text-blue-950 dark:text-blue-200 font-medium ring-1 ring-[#0066ff]"
-                      : "border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300"
+                      ? "border-[#0B5CFF] bg-[#0B5CFF]/15 text-white font-medium ring-1 ring-[#0B5CFF]"
+                      : "border-white/10 bg-white/5 hover:bg-white/10 text-slate-300"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="font-bold text-emerald-400">
                       🟢 Minor Price Refresh (+2.8%)
                     </span>
-                    <span className="text-[10px] bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/30">
                       Seamless
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                  <p className="text-[11px] text-slate-400 mt-1">
                     Price ₹3,599/mo (+₹100). Preserves 1:1 mentor and all entitlements.
                   </p>
                 </button>
@@ -204,21 +204,21 @@ export function MerchantImpactSimulator() {
                 <button
                   type="button"
                   onClick={() => applyScenario("preset_review")}
-                  className={`text-left text-xs p-3 rounded-lg border transition-all ${
+                  className={`text-left text-xs p-3 rounded-xl border transition-all ${
                     candidateScenario === "preset_review"
-                      ? "border-[#0066ff] bg-blue-50/50 dark:bg-blue-950/30 text-blue-950 dark:text-blue-200 font-medium ring-1 ring-[#0066ff]"
-                      : "border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300"
+                      ? "border-[#0B5CFF] bg-[#0B5CFF]/15 text-white font-medium ring-1 ring-[#0B5CFF]"
+                      : "border-white/10 bg-white/5 hover:bg-white/10 text-slate-300"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-amber-600 dark:text-amber-400">
+                    <span className="font-bold text-amber-400">
                       🟡 Price Increase Above Tolerance (+8.5%)
                     </span>
-                    <span className="text-[10px] bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/30">
                       Review Needed
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                  <p className="text-[11px] text-slate-400 mt-1">
                     Price ₹3,799/mo (+₹300). Exceeds 5% automated approval tolerance.
                   </p>
                 </button>
@@ -226,21 +226,21 @@ export function MerchantImpactSimulator() {
                 <button
                   type="button"
                   onClick={() => applyScenario("preset_breaking")}
-                  className={`text-left text-xs p-3 rounded-lg border transition-all ${
+                  className={`text-left text-xs p-3 rounded-xl border transition-all ${
                     candidateScenario === "preset_breaking"
-                      ? "border-[#0066ff] bg-blue-50/50 dark:bg-blue-950/30 text-blue-950 dark:text-blue-200 font-medium ring-1 ring-[#0066ff]"
-                      : "border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300"
+                      ? "border-[#0B5CFF] bg-[#0B5CFF]/15 text-white font-medium ring-1 ring-[#0B5CFF]"
+                      : "border-white/10 bg-white/5 hover:bg-white/10 text-slate-300"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-rose-600 dark:text-rose-400">
+                    <span className="font-bold text-rose-400">
                       🔴 Service Scope Shift (AI Tutor / No 1:1)
                     </span>
-                    <span className="text-[10px] bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] bg-rose-500/20 text-rose-300 px-1.5 py-0.5 rounded border border-rose-500/30">
                       Breaking
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
+                  <p className="text-[11px] text-slate-400 mt-1">
                     Replaces human mentor with AI Discord bot. Removes weekly 1:1 video review.
                   </p>
                 </button>
@@ -248,11 +248,11 @@ export function MerchantImpactSimulator() {
             </div>
 
             {/* Parameter adjustments */}
-            <div className="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+            <div className="space-y-4 pt-2 border-t border-white/10">
               <div>
-                <label className="flex items-center justify-between text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                <label className="flex items-center justify-between text-xs font-medium text-slate-300 mb-1">
                   <span>Proposed Monthly Price (INR)</span>
-                  <span className="font-semibold text-slate-900 dark:text-white">
+                  <span className="font-bold text-white">
                     ₹{(price / 100).toLocaleString("en-IN")}
                   </span>
                 </label>
@@ -266,9 +266,9 @@ export function MerchantImpactSimulator() {
                     setPrice(Number(e.target.value));
                     setCandidateScenario("custom");
                   }}
-                  className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#0066ff]"
+                  className="w-full h-1.5 bg-black/40 rounded-lg appearance-none cursor-pointer accent-[#0B5CFF]"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                <div className="flex justify-between text-[10px] text-slate-500 mt-1">
                   <span>₹3,000</span>
                   <span>Baseline: ₹3,499</span>
                   <span>₹5,000</span>
@@ -278,7 +278,7 @@ export function MerchantImpactSimulator() {
               {/* Support Tier & Human Mentor */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-slate-300 mb-1">
                     Support Tier
                   </label>
                   <select
@@ -287,7 +287,7 @@ export function MerchantImpactSimulator() {
                       setSupportTier(e.target.value);
                       setCandidateScenario("custom");
                     }}
-                    className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md p-2 text-slate-800 dark:text-slate-200 focus:ring-1 focus:ring-[#0066ff]"
+                    className="w-full text-xs bg-black/40 border border-white/15 rounded-xl p-2.5 text-white focus:ring-1 focus:ring-[#0B5CFF]"
                   >
                     <option value="dedicated_mentor">Dedicated Mentor</option>
                     <option value="priority_email">Priority Email</option>
@@ -296,7 +296,7 @@ export function MerchantImpactSimulator() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                  <label className="block text-xs font-medium text-slate-300 mb-1">
                     1:1 Sessions / Mo
                   </label>
                   <input
@@ -308,7 +308,7 @@ export function MerchantImpactSimulator() {
                       setOneOnOneSessions(Number(e.target.value));
                       setCandidateScenario("custom");
                     }}
-                    className="w-full text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-md p-2 text-slate-800 dark:text-slate-200 focus:ring-1 focus:ring-[#0066ff]"
+                    className="w-full text-xs bg-black/40 border border-white/15 rounded-xl p-2.5 text-white focus:ring-1 focus:ring-[#0B5CFF]"
                   />
                 </div>
               </div>
@@ -322,11 +322,11 @@ export function MerchantImpactSimulator() {
                     setHasDedicatedHuman(e.target.checked);
                     setCandidateScenario("custom");
                   }}
-                  className="w-4 h-4 text-[#0066ff] rounded border-slate-300 dark:border-slate-700 focus:ring-[#0066ff]"
+                  className="w-4 h-4 text-[#0B5CFF] rounded border-white/20 bg-black/40 focus:ring-[#0B5CFF]"
                 />
                 <label
                   htmlFor="hasHuman"
-                  className="text-xs text-slate-700 dark:text-slate-300 cursor-pointer"
+                  className="text-xs text-slate-300 cursor-pointer"
                 >
                   Includes Dedicated Human Expert Mentor
                 </label>
@@ -339,48 +339,12 @@ export function MerchantImpactSimulator() {
                 type="button"
                 onClick={runAnalysis}
                 disabled={isLoading}
-                className="w-full py-3 px-4 bg-[#0066ff] hover:bg-[#0052cc] text-white font-medium text-sm rounded-lg shadow-sm transition-all flex items-center justify-center space-x-2 disabled:opacity-50"
+                className="w-full py-3 px-4 bg-[#0B5CFF] hover:bg-[#004DE6] text-white font-bold text-xs rounded-xl shadow-[0_0_16px_rgba(11,92,255,0.4)] transition-all flex items-center justify-center space-x-2 disabled:opacity-50 mg-press"
               >
                 {isLoading ? (
-                  <>
-                    <svg
-                      className="animate-spin h-4 w-4 text-white"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    <span>Evaluating Subscriber Envelopes...</span>
-                  </>
+                  <span>Evaluating Subscriber Envelopes...</span>
                 ) : (
-                  <>
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                      />
-                    </svg>
-                    <span>Analyze Downstream Impact Before Publishing</span>
-                  </>
+                  <span>Analyze Downstream Impact Before Publishing &rarr;</span>
                 )}
               </button>
             </div>
@@ -390,38 +354,26 @@ export function MerchantImpactSimulator() {
         {/* Right Column: Pre-Publish Impact Report (7 cols) */}
         <div className="lg:col-span-7 space-y-6">
           {error && (
-            <div className="p-4 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 rounded-xl text-rose-700 dark:text-rose-300 text-sm">
+            <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs">
               <span className="font-semibold">Error:</span> {error}
             </div>
           )}
 
           {publishMessage && (
-            <div className="p-4 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-700 dark:text-emerald-300 text-sm">
+            <div className="p-4 bg-emerald-500/15 border border-emerald-500/40 rounded-xl text-emerald-300 text-xs">
               {publishMessage}
             </div>
           )}
 
           {!preview && !isLoading && !error && (
-            <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-12 text-center shadow-sm">
-              <div className="w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950/50 text-[#0066ff] flex items-center justify-center mx-auto mb-3">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
+            <div className="bg-[#0D1527] border border-white/10 rounded-2xl p-12 text-center shadow-xl">
+              <div className="w-12 h-12 rounded-full bg-blue-500/10 text-[#60A5FA] flex items-center justify-center mx-auto mb-3">
+                ⚡
               </div>
-              <h3 className="text-base font-semibold text-slate-800 dark:text-white">
+              <h3 className="text-base font-bold text-white">
                 No Impact Simulation Generated Yet
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+              <p className="text-xs text-slate-400 mt-1 max-w-md mx-auto">
                 Select a candidate scenario on the left and click &ldquo;Analyze
                 Impact Before Publishing&rdquo; to simulate effects on active
                 authorizations.
@@ -432,31 +384,31 @@ export function MerchantImpactSimulator() {
           {preview && (
             <div className="space-y-6 animate-fade-in">
               {/* Top Summary Card */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm space-y-5">
-                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div className="bg-[#0D1527] border border-white/10 rounded-2xl p-6 shadow-xl space-y-5">
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
                   <div>
-                    <h2 className="text-base font-semibold text-slate-900 dark:text-white">
+                    <h2 className="text-base font-bold text-white">
                       2. Downstream Impact Analysis Report
                     </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-slate-400">
                       Evaluated against {preview.totalSubscribersAffected} active
                       subscriber authorization envelopes
                     </p>
                   </div>
-                  <span className="text-xs bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-mono px-2.5 py-1 rounded">
+                  <span className="text-xs bg-white/5 text-slate-300 font-mono px-2.5 py-1 rounded-xl border border-white/10">
                     Candidate Version: v{preview.proposedVersion}
                   </span>
                 </div>
 
                 {/* Progress Distribution Bar */}
                 <div>
-                  <div className="flex justify-between text-xs font-medium text-slate-700 dark:text-slate-300 mb-1.5">
+                  <div className="flex justify-between text-xs font-medium text-slate-300 mb-1.5">
                     <span>Subscriber Transition Distribution</span>
                     <span>
                       {preview.summary.compatiblePercentage}% Seamless Migration
                     </span>
                   </div>
-                  <div className="h-3 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden flex">
+                  <div className="h-3 w-full bg-black/40 rounded-full overflow-hidden flex border border-white/5">
                     <div
                       style={{
                         width: `${preview.summary.compatiblePercentage}%`,
@@ -479,7 +431,7 @@ export function MerchantImpactSimulator() {
                       title={`Breaking: ${preview.summary.breakingCount} subscribers`}
                     />
                   </div>
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 mt-2">
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 mt-2">
                     <span className="flex items-center space-x-1">
                       <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
                       <span>Seamless ({preview.summary.compatibleCount})</span>
@@ -497,38 +449,38 @@ export function MerchantImpactSimulator() {
 
                 {/* Financial Metric Cards */}
                 <div className="grid grid-cols-3 gap-3 pt-2">
-                  <div className="p-3.5 bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/60 rounded-lg">
-                    <div className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-300">
+                  <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+                    <div className="text-[11px] font-semibold text-emerald-400">
                       Seamless MRR
                     </div>
-                    <div className="text-lg font-bold text-emerald-900 dark:text-emerald-100 mt-0.5">
+                    <div className="text-lg font-black text-white mt-0.5">
                       ₹{(preview.financialImpact.seamlessMRRPaise / 100).toLocaleString("en-IN")}
                     </div>
-                    <div className="text-[10px] text-emerald-600 dark:text-emerald-400 mt-0.5">
+                    <div className="text-[10px] text-emerald-400 mt-0.5">
                       Auto-approved by agent
                     </div>
                   </div>
 
-                  <div className="p-3.5 bg-amber-50/50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/60 rounded-lg">
-                    <div className="text-[11px] font-semibold text-amber-700 dark:text-amber-300">
+                  <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                    <div className="text-[11px] font-semibold text-amber-400">
                       Review Pending MRR
                     </div>
-                    <div className="text-lg font-bold text-amber-900 dark:text-amber-100 mt-0.5">
+                    <div className="text-lg font-black text-white mt-0.5">
                       ₹{(preview.financialImpact.reviewPendingMRRPaise / 100).toLocaleString("en-IN")}
                     </div>
-                    <div className="text-[10px] text-amber-600 dark:text-amber-400 mt-0.5">
+                    <div className="text-[10px] text-amber-400 mt-0.5">
                       Requires buyer review
                     </div>
                   </div>
 
-                  <div className="p-3.5 bg-rose-50/50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-800/60 rounded-lg">
-                    <div className="text-[11px] font-semibold text-rose-700 dark:text-rose-300">
+                  <div className="p-3.5 bg-rose-500/10 border border-rose-500/30 rounded-xl">
+                    <div className="text-[11px] font-semibold text-rose-400">
                       At-Risk MRR
                     </div>
-                    <div className="text-lg font-bold text-rose-900 dark:text-rose-100 mt-0.5">
+                    <div className="text-lg font-black text-white mt-0.5">
                       ₹{(preview.financialImpact.atRiskMRRPaise / 100).toLocaleString("en-IN")}
                     </div>
-                    <div className="text-[10px] text-rose-600 dark:text-rose-400 mt-0.5">
+                    <div className="text-[10px] text-rose-400 mt-0.5">
                       Requires reauthorization
                     </div>
                   </div>
@@ -536,12 +488,12 @@ export function MerchantImpactSimulator() {
 
                 {/* Recommendations */}
                 {preview.recommendations.length > 0 && (
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-lg">
-                    <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center space-x-1.5 mb-1">
+                  <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
+                    <div className="text-xs font-bold text-white flex items-center space-x-1.5 mb-1">
                       <span>💡</span>
                       <span>Strategic Merchant Recommendations:</span>
                     </div>
-                    <ul className="text-xs text-slate-600 dark:text-slate-300 space-y-1 pl-5 list-disc">
+                    <ul className="text-xs text-slate-300 space-y-1 pl-5 list-disc">
                       {preview.recommendations.map((rec, idx) => (
                         <li key={idx}>{rec}</li>
                       ))}
@@ -551,14 +503,14 @@ export function MerchantImpactSimulator() {
               </div>
 
               {/* Subscriber Cohort Table */}
-              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm space-y-4">
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white">
+              <div className="bg-[#0D1527] border border-white/10 rounded-2xl p-6 shadow-xl space-y-4">
+                <h3 className="text-sm font-bold text-white">
                   Subscriber Cohort Breakdown
                 </h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead>
-                      <tr className="border-b border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400">
+                      <tr className="border-b border-white/10 text-slate-400">
                         <th className="py-2.5 px-3 font-semibold">Subscriber ID</th>
                         <th className="py-2.5 px-3 font-semibold">Current Baseline</th>
                         <th className="py-2.5 px-3 font-semibold">Status</th>
@@ -566,11 +518,11 @@ export function MerchantImpactSimulator() {
                         <th className="py-2.5 px-3 font-semibold">Key Finding</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-200">
+                    <tbody className="divide-y divide-white/5 text-slate-200">
                       {preview.subscribers.map((sub, idx) => (
                         <tr
                           key={idx}
-                          className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
+                          className="hover:bg-white/5 transition-colors"
                         >
                           <td className="py-2.5 px-3 font-mono font-medium">
                             {sub.userId}
@@ -580,17 +532,17 @@ export function MerchantImpactSimulator() {
                           </td>
                           <td className="py-2.5 px-3">
                             {sub.compatibility === "COMPATIBLE" && (
-                              <span className="inline-flex items-center text-[11px] font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-200 dark:border-emerald-800">
+                              <span className="inline-flex items-center text-[11px] font-semibold text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">
                                 COMPATIBLE
                               </span>
                             )}
                             {sub.compatibility === "REVIEW" && (
-                              <span className="inline-flex items-center text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-950/60 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800">
+                              <span className="inline-flex items-center text-[11px] font-semibold text-amber-400 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30">
                                 REVIEW
                               </span>
                             )}
                             {sub.compatibility === "BREAKING" && (
-                              <span className="inline-flex items-center text-[11px] font-semibold text-rose-700 dark:text-rose-300 bg-rose-100 dark:bg-rose-950/60 px-2 py-0.5 rounded border border-rose-200 dark:border-rose-800">
+                              <span className="inline-flex items-center text-[11px] font-semibold text-rose-400 bg-rose-500/20 px-2 py-0.5 rounded border border-rose-500/30">
                                 BREAKING
                               </span>
                             )}
@@ -598,7 +550,7 @@ export function MerchantImpactSimulator() {
                           <td className="py-2.5 px-3 font-medium">
                             {sub.requiredAction === "NONE" ? "Seamless Auto-Migration" : sub.requiredAction}
                           </td>
-                          <td className="py-2.5 px-3 text-slate-500 dark:text-slate-400">
+                          <td className="py-2.5 px-3 text-slate-400">
                             {sub.reasons[0]?.message || "Conforms to authorized tolerance"}
                           </td>
                         </tr>
