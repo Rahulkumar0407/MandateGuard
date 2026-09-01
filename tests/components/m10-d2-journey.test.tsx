@@ -16,12 +16,13 @@ describe("M10-D2 — Production-Grade Product Experience Journey", () => {
       <PublicLandingPage onGetStarted={() => {}} onExploreDemo={() => {}} />,
     );
 
-    expect(html).toContain("Make it easier for AI buyers to choose you.");
+    expect(html).toContain("Make your offer clear enough to be chosen");
     expect(html).toContain("Get started");
-    expect(html).toContain("The next buyer might be AI.");
-    expect(html).toContain("AI BUYER SEARCH");
-    expect(html).toContain("THE WEB WAS BUILT");
-    expect(html).toContain("COMMERCE IS BEING REBUILT");
+    expect(html).toContain("AI IS BECOMING");
+    expect(html).toContain("THE BUYER");
+    expect(html).toContain("THE NEXT SHIFT IN COMMERCE");
+    expect(html).toContain("The web was built");
+    expect(html).toContain("Commerce is being rebuilt");
     // No generic AI slop or fake statistics
     expect(html).not.toContain("Powered by cutting-edge AI");
   });
@@ -110,7 +111,7 @@ describe("M10-D2 — Production-Grade Product Experience Journey", () => {
     const html = renderToString(<HomeOverview onNavigate={() => {}} report={null} />);
 
     expect(html).toContain("needs your attention");
-    expect(html).toContain("Good afternoon.");
+    expect(html).toContain("Good");
     expect(html).toContain("AI buyers are missing your offer.");
   });
 });

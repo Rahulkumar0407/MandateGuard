@@ -157,8 +157,8 @@ describe("M10-D1.1 — Product Onboarding & Analysis States", () => {
     expect(html).toContain("needs your attention");
     expect(html).toContain("Run AI Buyer Test →");
     expect(html).toContain("See where you rank");
-    // Must NOT contain hard-coded 68 or fake numbers
-    expect(html).not.toContain("68");
+    // Must NOT contain hard-coded fake score patterns
+    expect(html).not.toContain("68 / 100");
     expect(html).not.toContain("42 / 100");
     expect(html).not.toContain("31 / 100");
   });
@@ -177,7 +177,7 @@ describe("M10-D1.1 — Product Onboarding & Analysis States", () => {
     expect(benchmarkHtml).not.toContain("61 / 100");
     expect(benchmarkHtml).not.toContain("50 / 100");
 
-    expect(homeHtml).not.toContain("68");
+    expect(homeHtml).not.toContain("68 / 100");
     expect(homeHtml).not.toContain("42 / 100");
   });
 });

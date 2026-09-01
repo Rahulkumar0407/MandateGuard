@@ -17,19 +17,18 @@ export function ProtectionExperience() {
     if (prefersReduced || !sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Draw border stroke / highlight gate on scroll
       gsap.fromTo(
-        ".gate-card",
-        { y: 30, opacity: 0.85 },
+        ".protection-card",
+        { opacity: 0.85, y: 24 },
         {
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 65%",
+            start: "top 68%",
             end: "top 30%",
             scrub: 0.5,
           },
-          y: 0,
           opacity: 1,
+          y: 0,
           ease: "power2.out",
         },
       );
@@ -43,167 +42,510 @@ export function ProtectionExperience() {
     setTimeout(() => {
       setIsProcessing(false);
       setHasDrifted(true);
-    }, 500);
+    }, 600);
   };
 
   return (
     <section
       ref={sectionRef}
       id="buy-safely"
-      className="w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 py-24 sm:py-32 flex flex-col justify-center box-border"
+      className="w-full"
+      style={{ background: "var(--mg-bg)" }}
     >
-      {/* ─── Left-Aligned Narrative ─── */}
-      <div className="w-full text-left mb-10 sm:mb-12">
-        <span className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-[var(--mg-brand)] block mb-3">
-          07 &amp; 08 — AUTHORIZATION &amp; THE BARRIER
-        </span>
-
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-[-0.04em] text-[var(--mg-text)] leading-[1.02] mb-2 max-w-[16ch] [text-wrap:balance]">
-          BEING CHOSEN
-          <br />
-          IS ONLY HALF THE JOB.
-        </h2>
-
-        <div className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-[-0.035em] text-[var(--mg-brand)] leading-[1.05] mb-3 max-w-[20ch] [text-wrap:balance]">
-          IF THE TERMS CHANGE,
-          <br />
-          THE AUTHORIZATION DOESN&apos;T.
-        </div>
-
-        <p className="text-sm sm:text-base text-[var(--mg-text-secondary)] leading-relaxed max-w-[50ch]">
-          The buyer approves exact terms. If a merchant later tries to charge an unexpected amount, MandateGuard stops the payment instantly before any money moves.
-        </p>
-      </div>
-
-      {/* ─── Transaction Gated Canvas ─── */}
-      <div className="w-full space-y-4">
-        {/* Action Header */}
-        <div className="flex justify-between items-center pb-2 border-b border-[var(--mg-border)]">
-          <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--mg-text-muted)]">
-            TRANSACTION PROTECTION
-          </span>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleTryPayment}
-              className="px-4 py-2 text-xs font-mono font-bold rounded-xl bg-[var(--mg-brand)] text-white hover:bg-[var(--mg-brand-hover)] transition-all cursor-pointer shadow-sm min-h-[36px]"
-            >
-              {isProcessing ? "Checking..." : "Try Payment (₹4,129) ➔"}
-            </button>
-            <button
-              onClick={() => setHasDrifted(!hasDrifted)}
-              className="text-xs font-mono text-[var(--mg-text-muted)] hover:underline cursor-pointer min-h-[36px] flex items-center"
-            >
-              {hasDrifted ? "Simulating: Term Drift" : "Simulating: Exact Match"}
-            </button>
+      <div
+        className="mg-section"
+        style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "var(--section-py) var(--section-px)" }}
+      >
+        {/* ─── Editorial Header ─── */}
+        <div style={{ marginBottom: "clamp(3rem, 6vw, 5rem)" }}>
+          <div className="mg-micro" style={{ color: "var(--mg-text-muted)", marginBottom: "1rem", letterSpacing: "0.12em" }}>
+            07 &amp; 08 — THE BARRIER
           </div>
+
+          <h2 className="mg-display" style={{ color: "var(--mg-text)", maxWidth: "16ch", marginBottom: "1.5rem" }}>
+            Being chosen is
+            <br />
+            <span className="mg-brand">only half the job.</span>
+          </h2>
+
+          <div className="mg-headline" style={{ color: "var(--mg-text-secondary)", maxWidth: "28ch", marginBottom: "1.5rem" }}>
+            If the terms change, the authorization doesn&apos;t.
+          </div>
+
+          <p className="mg-body" style={{ color: "var(--mg-text-secondary)", maxWidth: "50ch" }}>
+            The buyer approved exact terms. If a merchant tries to charge an unexpected
+            amount on renewal, MandateGuard stops the payment before any money moves.
+          </p>
         </div>
 
-        {/* 2-Column Gate Boundary */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
-          {/* Left: What Buyer Approved */}
-          <div className="gate-card md:col-span-6 p-6 sm:p-9 rounded-2xl border border-[var(--mg-border)] bg-[var(--mg-surface)] flex flex-col justify-between space-y-5 shadow-lg min-w-0">
-            <div>
-              <div className="flex justify-between items-center mb-5">
-                <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-brand)] tracking-widest">
-                  BUYER APPROVED
-                </span>
-                <span className="px-3 py-1 rounded-full bg-[var(--mg-brand-soft)] text-[var(--mg-brand)] font-mono text-[11px] font-black">
+        {/* ─── Physical Transaction Stop ─── */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr auto 1fr",
+            gap: "clamp(1.5rem, 3vw, 2.5rem)",
+            alignItems: "stretch",
+          }}
+        >
+          {/* Left: Buyer Approved */}
+          <div className="protection-card">
+            <div
+              style={{
+                height: "100%",
+                padding: "2rem",
+                background: "var(--mg-surface)",
+                border: "1px solid var(--mg-glass-1-border)",
+                borderRadius: "1rem",
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
+                <div>
+                  <div className="mg-micro" style={{ color: "var(--mg-text-muted)", marginBottom: "0.5rem", letterSpacing: "0.08em" }}>
+                    BUYER APPROVED
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-space-grotesk), sans-serif",
+                      fontSize: "1.25rem",
+                      fontWeight: 700,
+                      color: "var(--mg-text)",
+                    }}
+                  >
+                    System Design Pro
+                  </div>
+                </div>
+                <span
+                  className="mg-pill"
+                  style={{ background: "var(--mg-brand-soft)", color: "var(--mg-brand)", border: "1px solid rgba(11,92,255,0.2)" }}
+                >
                   AUTHORIZED
                 </span>
               </div>
 
-              <div className="space-y-1 mb-5">
-                <h3 className="text-xl sm:text-2xl font-bold text-[var(--mg-text)] tracking-tight truncate">
-                  YOUR BUSINESS
-                </h3>
-                <div className="text-2xl sm:text-3xl font-extrabold font-mono text-[var(--mg-text)] tracking-tight">
-                  ₹3,999 <span className="text-xs font-normal text-[var(--mg-text-muted)] font-sans">/ month</span>
+              {/* Price */}
+              <div style={{ marginBottom: "1.5rem" }}>
+                <div
+                  style={{
+                    fontFamily: "var(--font-space-grotesk), sans-serif",
+                    fontSize: "2.5rem",
+                    fontWeight: 700,
+                    letterSpacing: "-0.04em",
+                    color: "var(--mg-text)",
+                    lineHeight: 1,
+                  }}
+                >
+                  ₹3,999
+                  <span
+                    style={{
+                      fontSize: "0.875rem",
+                      fontWeight: 500,
+                      color: "var(--mg-text-muted)",
+                      marginLeft: "0.375rem",
+                    }}
+                  >
+                    /month
+                  </span>
                 </div>
               </div>
 
-              <div className="space-y-2 font-mono text-xs text-[var(--mg-text-secondary)] border-t border-[var(--mg-border)] pt-4">
-                <div>✓ 1:1 Human mentor format</div>
-                <div>✓ 8 live sessions / month</div>
-                <div>✓ Guaranteed 24h response SLA</div>
-                <div>✓ Authorized snapshot locked</div>
+              {/* Approved terms */}
+              <div style={{ flex: 1 }}>
+                <div className="mg-micro" style={{ color: "var(--mg-text-muted)", marginBottom: "0.75rem", letterSpacing: "0.08em" }}>
+                  LOCKED TERMS
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                  {[
+                    "1:1 Human mentor format",
+                    "8 live sessions / month",
+                    "Guaranteed 24h response SLA",
+                    "Monthly recurring billing",
+                  ].map((term) => (
+                    <div
+                      key={term}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        fontFamily: "var(--font-inter), sans-serif",
+                        fontSize: "0.875rem",
+                        color: "var(--mg-text-secondary)",
+                      }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <circle cx="7" cy="7" r="6" stroke="var(--mg-success)" strokeWidth="1.5" />
+                        <path d="M4 7l2 2 4-4" stroke="var(--mg-success)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      {term}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="pt-4 border-t border-[var(--mg-border)] text-xs font-mono text-[var(--mg-text-muted)] flex justify-between">
-              <span>Status: Immutable</span>
-              <span className="text-[var(--mg-brand)] font-bold">Snapshot: snap_88f2</span>
+              <div
+                style={{
+                  marginTop: "1.5rem",
+                  padding: "0.75rem 1rem",
+                  background: "var(--mg-bg)",
+                  border: "1px solid var(--mg-glass-1-border)",
+                  borderRadius: "0.5rem",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span className="mg-micro" style={{ color: "var(--mg-text-muted)" }}>
+                  Snapshot
+                </span>
+                <span
+                  className="mg-micro"
+                  style={{ color: "var(--mg-brand)", letterSpacing: "0.04em" }}
+                >
+                  snap_88f2 · SHA-256
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Right: What Was Requested / Stoppage Gate */}
+          {/* Center: Barrier Visual */}
           <div
-            className={`gate-card md:col-span-6 p-6 sm:p-9 rounded-2xl border flex flex-col justify-between space-y-5 transition-all duration-300 min-w-0 ${
-              hasDrifted
-                ? "border-red-500/30 bg-red-500/[0.04] shadow-lg"
-                : "border-emerald-500/30 bg-emerald-500/[0.04] shadow-lg"
-            }`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: "0 0.5rem",
+            }}
           >
-            <div>
-              <div className="flex justify-between items-center mb-5">
-                <span
-                  className={`text-[10px] font-mono uppercase font-bold tracking-widest ${
-                    hasDrifted ? "text-[var(--mg-critical)]" : "text-[var(--mg-success)]"
-                  }`}
-                >
-                  {hasDrifted ? "MISMATCH DETECTED" : "CYCLE RENEWAL MATCH"}
-                </span>
-                <ShieldIcon size={28} blocked={hasDrifted} active={!hasDrifted} />
-              </div>
-
-              <div className="space-y-1 mb-5">
-                <div className="text-[10px] font-mono text-[var(--mg-text-muted)] uppercase tracking-wider">
-                  {hasDrifted ? "MERCHANT REQUESTS" : "RECURRING CHARGE"}
-                </div>
+            <div style={{ position: "relative" }}>
+              {hasDrifted ? (
+                /* Blocked state */
                 <div
-                  className={`text-2xl sm:text-3xl font-extrabold font-mono tracking-tight ${
-                    hasDrifted ? "text-[var(--mg-critical)]" : "text-[var(--mg-success)]"
-                  }`}
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
                 >
-                  {hasDrifted ? "₹4,129" : "₹3,999"}{" "}
-                  <span className="text-xs font-normal text-[var(--mg-text-muted)] font-sans">/ month</span>
+                  <div
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: "50%",
+                      background: "var(--mg-critical-soft)",
+                      border: "2px solid var(--mg-critical)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      animation: "stop-pulse 0.6s ease-out",
+                    }}
+                  >
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <circle cx="14" cy="14" r="12" stroke="var(--mg-critical)" strokeWidth="2" />
+                      <path d="M10 10l8 8M18 10l-8 8" stroke="var(--mg-critical)" strokeWidth="2.5" strokeLinecap="round" />
+                    </svg>
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-jetbrains-mono), monospace",
+                      fontSize: "0.5625rem",
+                      fontWeight: 700,
+                      color: "var(--mg-critical)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      textAlign: "center",
+                      maxWidth: "64px",
+                    }}
+                  >
+                    BLOCKED
+                  </div>
                 </div>
+              ) : (
+                /* Clear state */
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 64,
+                      height: 64,
+                      borderRadius: "50%",
+                      background: "var(--mg-success-soft)",
+                      border: "2px solid var(--mg-success)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ShieldIcon size={28} active />
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-jetbrains-mono), monospace",
+                      fontSize: "0.5625rem",
+                      fontWeight: 700,
+                      color: "var(--mg-success)",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.08em",
+                      textAlign: "center",
+                      maxWidth: "64px",
+                    }}
+                  >
+                    CLEAR
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Merchant Attempt */}
+          <div className="protection-card">
+            <div
+              style={{
+                height: "100%",
+                padding: "2rem",
+                background: hasDrifted ? "rgba(239, 68, 68, 0.03)" : "rgba(16, 185, 129, 0.03)",
+                border: `1px solid ${hasDrifted ? "rgba(239, 68, 68, 0.2)" : "rgba(16, 185, 129, 0.2)"}`,
+                borderRadius: "1rem",
+                display: "flex",
+                flexDirection: "column",
+                transition: "all 0.4s ease",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
+                <div>
+                  <div className="mg-micro" style={{ color: "var(--mg-text-muted)", marginBottom: "0.5rem", letterSpacing: "0.08em" }}>
+                    {hasDrifted ? "MISMATCH DETECTED" : "CYCLE RENEWAL"}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-space-grotesk), sans-serif",
+                      fontSize: "1.25rem",
+                      fontWeight: 700,
+                      color: hasDrifted ? "var(--mg-critical)" : "var(--mg-success)",
+                    }}
+                  >
+                    {hasDrifted ? "Price Changed" : "Terms Match"}
+                  </div>
+                </div>
+                <ShieldIcon size={32} blocked={hasDrifted} active={!hasDrifted} />
               </div>
 
-              <div className="space-y-2.5 font-mono text-xs border-t border-[var(--mg-border)] pt-4">
+              {/* Attempted price */}
+              <div style={{ marginBottom: "1.5rem" }}>
+                <div
+                  style={{
+                    fontFamily: "var(--font-space-grotesk), sans-serif",
+                    fontSize: "2.5rem",
+                    fontWeight: 700,
+                    letterSpacing: "-0.04em",
+                    lineHeight: 1,
+                    color: hasDrifted ? "var(--mg-critical)" : "var(--mg-success)",
+                  }}
+                >
+                  {hasDrifted ? "₹4,129" : "₹3,999"}
+                  <span
+                    style={{
+                      fontSize: "0.875rem",
+                      fontWeight: 500,
+                      color: "var(--mg-text-muted)",
+                      marginLeft: "0.375rem",
+                    }}
+                  >
+                    /month
+                  </span>
+                </div>
+                {hasDrifted && (
+                  <div
+                    style={{
+                      fontFamily: "var(--font-jetbrains-mono), monospace",
+                      fontSize: "0.6875rem",
+                      color: "var(--mg-text-muted)",
+                      marginTop: "0.375rem",
+                      textDecoration: "line-through",
+                    }}
+                  >
+                    was ₹3,999
+                  </div>
+                )}
+              </div>
+
+              {/* Result */}
+              <div style={{ flex: 1 }}>
                 {hasDrifted ? (
                   <>
-                    <div className="p-3 rounded-xl bg-red-500/15 text-[var(--mg-critical)] font-bold text-xs">
-                      🛡️ PAYMENT STOPPED · NO MONEY MOVED.
+                    <div
+                      style={{
+                        padding: "1rem 1.25rem",
+                        background: "rgba(239, 68, 68, 0.08)",
+                        border: "1px solid rgba(239, 68, 68, 0.2)",
+                        borderRadius: "0.75rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "1rem",
+                          fontWeight: 700,
+                          color: "var(--mg-critical)",
+                          marginBottom: "0.375rem",
+                        }}
+                      >
+                        PAYMENT STOPPED
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "0.875rem",
+                          color: "var(--mg-text-secondary)",
+                        }}
+                      >
+                        Price changed from ₹3,999 to ₹4,129. No money was moved.
+                      </div>
                     </div>
-                    <div className="text-[var(--mg-text-secondary)] text-xs leading-relaxed">
-                      <strong>Why?</strong> The price changed from ₹3,999 to ₹4,129. MandateGuard blocked the mutation before any money was moved.
-                    </div>
-                    <div className="text-amber-500 font-bold text-xs">
-                      REAUTHORIZATION REQUIRED
+
+                    <div
+                      style={{
+                        fontFamily: "var(--font-jetbrains-mono), monospace",
+                        fontSize: "0.6875rem",
+                        fontWeight: 700,
+                        color: "var(--mg-warning)",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06em",
+                      }}
+                    >
+                      Re-authorization required
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="p-3 rounded-xl bg-emerald-500/15 text-[var(--mg-success)] font-bold text-xs">
-                      ✓ TERMS MATCHED · PAYMENT EXECUTING
+                    <div
+                      style={{
+                        padding: "1rem 1.25rem",
+                        background: "rgba(16, 185, 129, 0.08)",
+                        border: "1px solid rgba(16, 185, 129, 0.2)",
+                        borderRadius: "0.75rem",
+                        marginBottom: "1rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "1rem",
+                          fontWeight: 700,
+                          color: "var(--mg-success)",
+                          marginBottom: "0.375rem",
+                        }}
+                      >
+                        TERMS MATCHED
+                      </div>
+                      <div
+                        style={{
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "0.875rem",
+                          color: "var(--mg-text-secondary)",
+                        }}
+                      >
+                        All terms match authorized snapshot. Payment executed.
+                      </div>
                     </div>
-                    <div className="text-[var(--mg-text-secondary)] text-xs leading-relaxed">
-                      All terms match the authorized snapshot. The payment is safely processed on Razorpay Test Mode.
+
+                    <div
+                      style={{
+                        fontFamily: "var(--font-jetbrains-mono), monospace",
+                        fontSize: "0.6875rem",
+                        fontWeight: 700,
+                        color: "var(--mg-success)",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06em",
+                      }}
+                    >
+                      Razorpay Test Mode
                     </div>
                   </>
                 )}
               </div>
-            </div>
 
-            <div className="pt-4 border-t border-[var(--mg-border)] text-xs font-mono text-[var(--mg-text-muted)] flex justify-between">
-              <span>Razorpay Test Mode</span>
-              <span className={hasDrifted ? "text-[var(--mg-critical)] font-bold" : "text-[var(--mg-success)] font-bold"}>
-                {hasDrifted ? "Mutation Blocked" : "Mutation Authorized"}
-              </span>
+              <div
+                style={{
+                  marginTop: "1.5rem",
+                  padding: "0.75rem 1rem",
+                  background: "var(--mg-bg)",
+                  border: "1px solid var(--mg-glass-1-border)",
+                  borderRadius: "0.5rem",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <span className="mg-micro" style={{ color: "var(--mg-text-muted)" }}>
+                  Result
+                </span>
+                <span
+                  className="mg-micro"
+                  style={{ color: hasDrifted ? "var(--mg-critical)" : "var(--mg-success)", letterSpacing: "0.04em" }}
+                >
+                  {hasDrifted ? "Mutation Blocked" : "Authorized"}
+                </span>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* ─── Action Bar ─── */}
+        <div
+          style={{
+            marginTop: "2rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "0.875rem",
+              color: "var(--mg-text-secondary)",
+            }}
+          >
+            The authorization boundary is enforced deterministically. No human review required.
+          </div>
+          <div style={{ display: "flex", gap: "0.75rem" }}>
+            <button
+              onClick={() => setHasDrifted(!hasDrifted)}
+              className="mg-btn-secondary"
+              style={{ fontSize: "0.8125rem" }}
+            >
+              {hasDrifted ? "Show match" : "Show drift"}
+            </button>
+            <button
+              onClick={handleTryPayment}
+              disabled={isProcessing}
+              className="mg-btn-primary"
+              style={{ fontSize: "0.8125rem" }}
+            >
+              {isProcessing ? "Checking..." : hasDrifted ? "Try ₹4,129 →" : "Try ₹3,999 →"}
+            </button>
+          </div>
+        </div>
       </div>
+
+      <style>{`
+        @keyframes stop-pulse {
+          0% { transform: scale(0.9); opacity: 0.5; }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+      `}</style>
     </section>
   );
 }

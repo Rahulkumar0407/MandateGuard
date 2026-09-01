@@ -77,7 +77,7 @@ describe("M10-D2.1 — Production Entry Experience (Landing → Auth → Onboard
       <PublicLandingPage onGetStarted={() => {}} onExploreDemo={() => {}} />,
     );
 
-    expect(html).toContain("Make it easier for AI buyers to choose you.");
+    expect(html).toContain("Make your offer clear enough to be chosen");
     expect(html).toContain("Get started");
     expect(html).toContain("See how it works");
     expect(html).not.toContain("68 / 100");

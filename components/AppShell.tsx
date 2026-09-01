@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Navbar, type ViewTab } from "./Navbar";
 import { HomeOverview } from "./HomeOverview";
 import { MerchantOverviewDashboard } from "./MerchantOverviewDashboard";
@@ -8,7 +9,6 @@ import { CustomerProtectionPortal } from "./CustomerProtectionPortal";
 import { DeveloperConsole } from "./DeveloperConsole";
 import { ConversationalBuyerPortal } from "./ConversationalBuyerPortal";
 import { PublicLandingPage } from "./PublicLandingPage";
-import { AuthModal } from "./AuthModal";
 import { BusinessOnboarding } from "./BusinessOnboarding";
 import { TransactionsWorkspace } from "./TransactionsWorkspace";
 import { CustomersView } from "./CustomersView";
@@ -38,11 +38,11 @@ interface SessionInfo {
 type View = "landing" | "onboarding" | "dashboard";
 
 export function AppShell() {
+  const router = useRouter();
   const [booting, setBooting] = useState(true);
   const [session, setSession] = useState<SessionInfo | null>(null);
   const [view, setView] = useState<View>("landing");
   const [activeTab, setActiveTab] = useState<ViewTab>("home");
-  const [authOpen, setAuthOpen] = useState(false);
   const [isSample, setIsSample] = useState(false);
 
   const [isSeeding, setIsSeeding] = useState(false);
@@ -68,19 +68,8 @@ export function AppShell() {
     })();
   }, []);
 
-  const handleGetStarted = () => setAuthOpen(true);
-
-  const handleAuthSuccess = async (user: { name: string; email: string }) => {
-    await fetch("/api/auth/signin", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ method: "email", email: user.email, name: user.name }),
-    });
-    const data = await refreshSession();
-    setSession(data);
-    setIsSample(Boolean(data?.session?.isSample));
-    setView("onboarding");
-    setAuthOpen(false);
+  const handleGetStarted = () => {
+    router.push("/auth/sign-in");
   };
 
   const handleExploreDemo = async () => {
@@ -126,13 +115,135 @@ export function AppShell() {
 
   if (booting) {
     return (
-      <div className="min-h-screen bg-[var(--mg-bg)] flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0B5CFF] to-[#004DE6] text-white flex items-center justify-center font-black text-xl shadow-[0_0_24px_rgba(11,92,255,0.5)] animate-pulse">
-            M
+      <div className="min-h-screen bg-[var(--mg-bg)] flex items-center justify-center" style={{ transition: "background 0.3s ease" }}>
+        <div className="flex flex-col items-center" style={{ gap: "20px" }}>
+          {/* Premium loader mark */}
+          <div
+            style={{
+              position: "relative",
+              width: "56px",
+              height: "56px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {/* Integrity ring SVG */}
+            <svg
+              viewBox="0 0 56 56"
+              fill="none"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                animation: "ring-form 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+              }}
+            >
+              <circle
+                cx="28"
+                cy="28"
+                r="25"
+                stroke="var(--mg-brand)"
+                strokeWidth="1.5"
+                strokeOpacity="0.3"
+                fill="none"
+              />
+              <circle
+                cx="28"
+                cy="28"
+                r="25"
+                stroke="var(--mg-brand)"
+                strokeWidth="1.5"
+                strokeDasharray="157"
+                strokeDashoffset="157"
+                fill="none"
+                strokeLinecap="round"
+                style={{
+                  animation: "ring-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+                  filter: "drop-shadow(0 0 4px rgba(11, 92, 255, 0.4))",
+                }}
+              />
+              {/* Traveling shine dot */}
+              <circle
+                cx="28"
+                cy="3"
+                r="2.5"
+                fill="var(--mg-brand)"
+                style={{
+                  animation: "shine-travel 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+                  filter: "drop-shadow(0 0 6px rgba(11, 92, 255, 0.8))",
+                }}
+              />
+            </svg>
+
+            {/* M monogram */}
+            <div
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "10px",
+                background: "linear-gradient(135deg, #0B5CFF, #004DE6)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: 900,
+                fontSize: "16px",
+                color: "white",
+                animation: "mark-appear 0.5s ease-out 0.2s both",
+              }}
+            >
+              M
+            </div>
           </div>
-          <span className="text-xs font-bold text-[var(--mg-text-muted)]">Loading MandateGuard...</span>
+
+          {/* Brand name */}
+          <div
+            style={{
+              fontFamily: "var(--font-space-grotesk), sans-serif",
+              fontSize: "12px",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              color: "var(--mg-text-muted)",
+              textTransform: "uppercase",
+              opacity: 0,
+              animation: "text-resolve 0.5s ease-out 0.6s forwards",
+            }}
+          >
+            Secure Commerce Initializing
+          </div>
         </div>
+
+        <style>{`
+          @keyframes ring-form {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+          }
+          @keyframes ring-draw {
+            0% { stroke-dashoffset: 157; }
+            100% { stroke-dashoffset: 0; }
+          }
+          @keyframes shine-travel {
+            0% { transform: rotate(0deg) translateX(25px); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: rotate(360deg) translateX(25px); opacity: 0; }
+          }
+          @keyframes mark-appear {
+            0% { opacity: 0; filter: blur(4px); transform: scale(0.9); }
+            100% { opacity: 1; filter: blur(0); transform: scale(1); }
+          }
+          @keyframes text-resolve {
+            0% { opacity: 0; filter: blur(3px); }
+            100% { opacity: 1; filter: blur(0); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+              animation-duration: 0.01ms !important;
+              animation-iteration-count: 1 !important;
+            }
+          }
+        `}</style>
       </div>
     );
   }
@@ -226,13 +337,6 @@ export function AppShell() {
           </footer>
         </div>
       )}
-
-      <AuthModal
-        isOpen={authOpen}
-        onClose={() => setAuthOpen(false)}
-        onSuccess={handleAuthSuccess}
-        onExploreDemo={handleExploreDemo}
-      />
     </>
   );
 }

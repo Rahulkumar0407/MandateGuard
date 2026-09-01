@@ -15,7 +15,7 @@ import { EngineeringCrossSection } from "@/components/landing/EngineeringCrossSe
 import { FinalCTA } from "@/components/landing/FinalCTA";
 
 /* ═══════════════════════════════════════════════════════════════
-   Landing Page Continuous Product Film Tests (Calm Editorial Hierarchy)
+   Landing Page Continuous Product Film Tests (M11 Redesign)
    ═══════════════════════════════════════════════════════════════ */
 
 describe("Landing Page Continuous Product Film Experiences", () => {
@@ -28,108 +28,93 @@ describe("Landing Page Continuous Product Film Experiences", () => {
       }),
     );
 
-    // Locked Hero
-    expect(html).toContain('class="hero-animation-stage"');
-    expect(html).toContain("The next buyer might be AI.");
-    expect(html).toContain("AI BUYER SEARCH");
+    // M20 Hero
+    expect(html).toContain("AI IS BECOMING");
+    expect(html).toContain("THE NEXT SHIFT IN COMMERCE");
 
-    // 01 / THE SHIFT
-    expect(html).toContain("01 / THE SHIFT");
-    expect(html).toContain("THE WEB WAS BUILT");
-    expect(html).toContain("COMMERCE IS BEING REBUILT");
+    // 01 — THE SHIFT
+    expect(html).toContain("01 — THE SHIFT");
+    expect(html).toContain("The web was built");
 
-    // 02 / THE OFFER
-    expect(html).toContain("02 / THE OFFER");
+    // 02 — THE OFFER
+    expect(html).toContain("02 — THE OFFER");
     expect(html).toContain("AI can&#x27;t choose");
-    expect(html).toContain("what it can&#x27;t understand.");
 
-    // 03 / THE MARKET
-    expect(html).toContain("03 / THE MARKET");
-    expect(html).toContain("When AI becomes the buyer,");
-    expect(html).toContain("ranking becomes the storefront.");
+    // 03 — THE MARKET
+    expect(html).toContain("03 — THE MARKET");
+    expect(html).toContain("When AI becomes");
 
-    // 04 / THE INVESTIGATION
-    expect(html).toContain("04 / THE INVESTIGATION");
-    expect(html).toContain("YOU&#x27;RE NOT LOSING");
-    expect(html).toContain("VERIFY THE PROMISE.");
+    // 04 — THE INVESTIGATION
+    expect(html).toContain("04 — THE INVESTIGATION");
+    expect(html).toContain("You&#x27;re not losing");
 
-    // 05 / THE TRANSFORMATION
-    expect(html).toContain("05 / THE TRANSFORMATION");
+    // 05 — THE FIX
+    expect(html).toContain("05 — THE FIX");
     expect(html).toContain("Make the promise");
-    expect(html).toContain("explicit.");
 
-    // 06 / THE CHOICE
-    expect(html).toContain("06 / THE CHOICE");
-    expect(html).toContain("NOW AI");
-    expect(html).toContain("CAN CHOOSE YOU.");
+    // 06 — THE CHOICE
+    expect(html).toContain("06 — THE CHOICE");
+    expect(html).toContain("Now AI");
 
-    // 07 & 08 — AUTHORIZATION & THE BARRIER
-    expect(html).toContain("07 &amp; 08 — AUTHORIZATION &amp; THE BARRIER");
-    expect(html).toContain("BEING CHOSEN");
-    expect(html).toContain("IF THE TERMS CHANGE,");
+    // 07 & 08 — THE BARRIER
+    expect(html).toContain("07 &amp; 08 — THE BARRIER");
+    expect(html).toContain("Being chosen");
 
-    // 09 / THE LOOP
-    expect(html).toContain("09 / THE LOOP");
-    expect(html).toContain("Transactions create");
-    expect(html).toContain("intelligence.");
+    // 09 — THE LOOP
+    expect(html).toContain("09 — THE LOOP");
+    expect(html).toContain("Intelligence from");
 
-    // 10 / THE PROOF
-    expect(html).toContain("10 / THE PROOF");
-    expect(html).toContain("MAKE AI");
-    expect(html).toContain("A BETTER BUYER.");
+    // 10 — THE PROOF
+    expect(html).toContain("10 — THE PROOF");
+    expect(html).toContain("Every decision");
 
-    // 11 / UNDER THE HOOD
-    expect(html).toContain("11 / UNDER THE HOOD");
-    expect(html).toContain("HOW MANDATEGUARD");
-    expect(html).toContain("CONNECTS THE DECISION");
+    // 11 — UNDER THE HOOD
+    expect(html).toContain("11 — UNDER THE HOOD");
+    expect(html).toContain("How MandateGuard connects");
 
     // FINAL CTA
     expect(html).toContain("THE NEW COMMERCE TRUST LAYER");
-    expect(html).toContain("BECOME THE");
-    expect(html).toContain("BUSINESS AI");
-    expect(html).toContain("CHOOSES.");
+    expect(html).toContain("Become the business AI");
   });
 
   // 2. Scene 01: The Shift
   it("renders ShiftScene comparing old commerce vs agent commerce", () => {
     const html = renderToString(React.createElement(ShiftScene));
-    expect(html).toContain("THE WEB WAS BUILT");
-    expect(html).toContain("FOR PEOPLE TO BROWSE.");
-    expect(html).toContain("COMMERCE IS BEING REBUILT");
-    expect(html).toContain("HUMAN COMMERCE (FRAGMENTED)");
-    expect(html).toContain("AGENT COMMERCE (DETERMINISTIC)");
+    expect(html).toContain("The web was built for");
+    expect(html).toContain("people to browse.");
+    expect(html).toContain("Commerce is being rebuilt");
+    expect(html).toContain("agents to decide.");
+    expect(html).toContain("AI BUYER AGENT");
   });
 
   // 3. Scene 02: The Offer
   it("renders OfferClarityMorph with commercial document decomposition", () => {
     const html = renderToString(React.createElement(OfferClarityMorph));
     expect(html).toContain("AI can&#x27;t choose");
-    expect(html).toContain("SYSTEM DESIGN PRO");
+    expect(html).toContain("what it can&#x27;t read.");
+    expect(html).toContain("System Design Pro");
     expect(html).toContain("₹3,499");
-    expect(html).toContain("HUMAN MENTOR");
-    expect(html).toContain("8 SESSIONS");
-    expect(html).toContain("24H RESPONSE");
-    expect(html).toContain("CANCEL ANYTIME");
+    expect(html).toContain("Dedicated 1:1 Human Mentor");
   });
 
   // 4. Scene 03: The Market
   it("renders RankingExperience with ranking field and buyer intent", () => {
     const html = renderToString(React.createElement(RankingExperience));
-    expect(html).toContain("When AI becomes the buyer,");
-    expect(html).toContain("ranking becomes the storefront.");
-    expect(html).toContain("BUYER HARD CONSTRAINTS");
-    expect(html).toContain("UNDER ₹4,000");
-    expect(html).toContain("YOUR BUSINESS");
+    expect(html).toContain("When AI becomes");
+    expect(html).toContain("the buyer,");
+    expect(html).toContain("Buyer Hard Constraints");
+    expect(html).toContain("≤ ₹4,000");
+    expect(html).toContain("Your Business");
   });
 
   // 5. Scene 04: The Investigation
   it("renders BuyerInvestigation with claim annotations", () => {
     const html = renderToString(React.createElement(BuyerInvestigation));
-    expect(html).toContain("YOU&#x27;RE NOT LOSING");
-    expect(html).toContain("YOUR BUSINESS (InterviewForge)");
-    expect(html).toContain("✓ Price: ₹3,999/month");
-    expect(html).toContain("? UNVERIFIED (FORMAT UNSTATED)");
-    expect(html).toContain("? UNVERIFIED (NO 24H SLA PROOF)");
+    expect(html).toContain("You&#x27;re not losing");
+    expect(html).toContain("because you&#x27;re bad");
+    expect(html).toContain("VERIFIED");
+    expect(html).toContain("UNVERIFIED");
+    expect(html).toContain("AI just couldn&#x27;t verify");
   });
 
   // 6. Scene 05: The Transformation
@@ -137,63 +122,58 @@ describe("Landing Page Continuous Product Film Experiences", () => {
     const html = renderToString(React.createElement(OfferFixExperience));
     expect(html).toContain("Make the promise");
     expect(html).toContain("explicit.");
-    expect(html).toContain("AI MATCH CONFIDENCE");
-    expect(html).toContain("DEDICATED 1:1 HUMAN MENTOR");
-    expect(html).toContain("GUARANTEED 24H RESPONSE SLA");
+    expect(html).toContain("SCORE: 62");
+    expect(html).toContain("SCORE: 91");
+    expect(html).toContain("Dedicated 1:1 Human Mentor");
   });
 
   // 7. Scene 06: The Choice
-  it("renders SimulationField with ranking moving to #1 and AI CHOSEN", () => {
+  it("renders SimulationField with buyer signals and match metric", () => {
     const html = renderToString(React.createElement(SimulationField));
-    expect(html).toContain("NOW AI");
-    expect(html).toContain("CAN CHOOSE YOU.");
-    expect(html).toContain("YOUR BUSINESS (InterviewForge)");
-    expect(html).toContain("RANK #1 · ✓ AI CHOSEN");
+    expect(html).toContain("Now AI");
+    expect(html).toContain("CAN CHOOSE YOU");
+    expect(html).toContain("BUYER MISSIONS MATCHED");
   });
 
   // 8. Scene 07 & 08: Authorization & The Barrier
   it("renders ProtectionExperience with terms mismatch and payment stopping", () => {
     const html = renderToString(React.createElement(ProtectionExperience));
-    expect(html).toContain("BEING CHOSEN");
-    expect(html).toContain("IF THE TERMS CHANGE,");
+    expect(html).toContain("Being chosen");
+    expect(html).toContain("only half the job.");
+    expect(html).toContain("If the terms change,");
     expect(html).toContain("MISMATCH DETECTED");
-    expect(html).toContain("PAYMENT STOPPED · NO MONEY MOVED.");
-    expect(html).toContain("REAUTHORIZATION REQUIRED");
+    expect(html).toContain("PAYMENT STOPPED");
+    expect(html).toContain("Re-authorization required");
   });
 
   // 9. Scene 09: The Loop
-  it("renders CommerceLoop with radial demand signals", () => {
+  it("renders CommerceLoop with living system visualization", () => {
     const html = renderToString(React.createElement(CommerceLoop));
-    expect(html).toContain("Transactions create");
-    expect(html).toContain("intelligence.");
-    expect(html).toContain("01 / DISCOVER");
-    expect(html).toContain("02 / UNDERSTAND");
-    expect(html).toContain("03 / CHOOSE");
-    expect(html).toContain("04 / AUTHORIZE");
-    expect(html).toContain("05 / PROTECT");
-    expect(html).toContain("06 / LEARN");
-    expect(html).toContain("07 / IMPROVE");
+    expect(html).toContain("Intelligence from");
+    expect(html).toContain("every transaction.");
+    expect(html).toContain("Discover");
   });
 
   // 10. Scene 10: The Proof
-  it("renders EvidenceStory with minimalist evidence wall", () => {
+  it("renders EvidenceStory with editorial number wall", () => {
     const html = renderToString(React.createElement(EvidenceStory));
-    expect(html).toContain("MAKE AI");
-    expect(html).toContain("A BETTER BUYER.");
-    expect(html).toContain("01 · MACHINE-READABLE OFFER");
-    expect(html).toContain("02 · VERIFIED COMMITMENTS");
-    expect(html).toContain("03 · BUYER INTENT");
+    expect(html).toContain("Every decision");
+    expect(html).toContain("accountable.");
+    expect(html).toContain("100");
+    expect(html).toContain("91.7");
+    expect(html).toContain("COMMITMENT");
+    expect(html).toContain("AUTHORIZATION");
   });
 
   // 11. Scene 11: Engineering (Under the Hood)
-  it("renders EngineeringCrossSection with 5-step human flow and developer disclosure", () => {
+  it("renders EngineeringCrossSection with architecture flow and developer disclosure", () => {
     const html = renderToString(React.createElement(EngineeringCrossSection));
-    expect(html).toContain("11 / UNDER THE HOOD");
-    expect(html).toContain("HOW MANDATEGUARD");
-    expect(html).toContain("CONNECTS THE DECISION");
-    expect(html).toContain("TO THE PAYMENT.");
-    expect(html).toContain("STEP 01");
-    expect(html).toContain("STEP 05");
+    expect(html).toContain("11 — UNDER THE HOOD");
+    expect(html).toContain("How MandateGuard connects");
+    expect(html).toContain("the decision to the payment.");
+    expect(html).toContain("PARSED");
+    expect(html).toContain("AUTHORIZED");
+    expect(html).toContain("EXECUTED");
     expect(html).toContain("FOR DEVELOPERS");
   });
 
@@ -205,11 +185,9 @@ describe("Landing Page Continuous Product Film Experiences", () => {
         onExploreDemo: () => {},
       }),
     );
-    expect(html).toContain("BECOME THE");
-    expect(html).toContain("BUSINESS AI");
-    expect(html).toContain("CHOOSES.");
-    expect(html).toContain("Get started →");
+    expect(html).toContain("Become the business AI");
+    expect(html).toContain("chooses.");
+    expect(html).toContain("Get started");
     expect(html).toContain("See how it works");
-    expect(html).toContain("Protected by MandateGuard");
   });
 });

@@ -3,68 +3,50 @@
 import React, { useRef, useState, useLayoutEffect } from "react";
 import { gsap } from "@/lib/gsap";
 
-interface FlowStep {
-  step: string;
-  actor: string;
-  summary: string;
-  detail: string;
-  badge: string;
-  highlight?: boolean;
-}
-
-const SYSTEM_FLOW: FlowStep[] = [
+const FLOW_STEPS = [
   {
     step: "01",
     actor: "AI BUYER",
-    summary: "&ldquo;I want a human mentor under ₹4,000 with 24-hour support.&rdquo;",
-    detail: "Buyer specifies goals and constraints in natural language.",
+    summary: "I need a human mentor under ₹4,000 with 24h support.",
+    detail: "Buyer specifies goals and hard constraints.",
     badge: "INTENT",
   },
   {
     step: "02",
     actor: "MANDATEGUARD",
-    summary: "UNDERSTANDS THE REQUEST",
-    detail: "Extracts hard constraints: Human mentor · ≤ ₹4,000 cap · 24h SLA.",
+    summary: "Parses constraints: mentor · ≤₹4,000 · 24h SLA",
+    detail: "Extracts machine-verifiable hard constraints.",
     badge: "PARSED",
-    highlight: true,
   },
   {
     step: "03",
-    actor: "YOUR BUSINESS",
-    summary: "CLEAR OFFER MATCH",
-    detail: "Verifies explicit commitments: Human mentor · ₹3,999/mo · 24h response.",
-    badge: "RANK #1",
+    actor: "MARKET",
+    summary: "System Design Pro — clearest match",
+    detail: "Ranks offers by verified fact density.",
+    badge: "RANKED",
   },
   {
     step: "04",
-    actor: "BUYER APPROVES",
-    summary: "₹3,999 / month",
-    detail: "Locks the exact commercial terms into an immutable authorization snapshot.",
+    actor: "BUYER",
+    summary: "₹3,999/month — approved",
+    detail: "Locks exact terms into immutable snapshot.",
     badge: "AUTHORIZED",
-    highlight: true,
   },
   {
     step: "05",
-    actor: "PAYMENT EXECUTED",
-    summary: "₹3,999 (Razorpay Test Mode)",
-    detail: "Payment executes only because the charge matches approved terms.",
-    badge: "✓ PROTECTED",
+    actor: "RAZORPAY",
+    summary: "₹3,999 executed",
+    detail: "Payment gates on exact term match.",
+    badge: "EXECUTED",
   },
 ];
 
-interface DevSpec {
-  id: string;
-  title: string;
-  desc: string;
-  snippet: string;
-}
-
-const DEV_SPECS: DevSpec[] = [
+const DEV_SPECS = [
   {
     id: "intent",
-    title: "01 · Canonical Buyer Intent",
+    title: "Buyer Intent Schema",
     desc: "Zod schema parsing buyer constraints into budget ceilings and required clauses.",
-    snippet: `export const BuyerIntentSchema = z.object({
+    code: `export const BuyerIntentSchema = z.object({
   category: z.string(),
   maxBudgetInr: z.number().int().positive(),
   requiredCommitments: z.array(z.string()),
@@ -73,31 +55,43 @@ const DEV_SPECS: DevSpec[] = [
   },
   {
     id: "contract",
-    title: "02 · Machine-Readable Contract",
+    title: "Offer Hash",
     desc: "Cryptographic SHA-256 version hash locking merchant commitments.",
-    snippet: `export function computeOfferHash(offer: OfferVersion): string {
+    code: `export function computeOfferHash(
+  offer: OfferVersion
+): string {
   const payload = JSON.stringify(offer.commitments);
-  return crypto.createHash("sha256").update(payload).digest("hex");
+  return crypto.createHash("sha256")
+    .update(payload).digest("hex");
 }`,
   },
   {
     id: "gate",
-    title: "03 · Deterministic Policy Gate",
+    title: "Policy Gate",
     desc: "Hard-constraint evaluation enforcing strict boolean price and term invariants.",
-    snippet: `export function evaluatePolicy(intent: BuyerIntent, offer: Offer): PolicyVerdict {
-  if (offer.priceMonthly > intent.maxBudgetInr) {
-    return { authorized: false, reason: "BUDGET_CEILING_EXCEEDED" };
+    code: `export function evaluatePolicy(
+  intent: BuyerIntent,
+  offer: Offer
+): PolicyVerdict {
+  if (offer.price > intent.maxBudgetInr) {
+    return { authorized: false,
+      reason: "BUDGET_EXCEEDED" };
   }
   return { authorized: true };
 }`,
   },
   {
     id: "executor",
-    title: "04 · Commerce Mutation Executor",
+    title: "Mutation Executor",
     desc: "Sole application-level provider mutation boundary gating all Razorpay operations.",
-    snippet: `export async function executeGatedMutation(action: FinancialAction) {
-  await verifyImmutableSnapshot(action.snapshotId, action.expectedHash);
-  return await RazorpayGateway.createSubscription(action.params);
+    code: `export async function executeGatedMutation(
+  action: FinancialAction
+) {
+  await verifyImmutableSnapshot(
+    action.snapshotId, action.expectedHash
+  );
+  return await RazorpayGateway
+    .createSubscription(action.params);
 }`,
   },
 ];
@@ -105,7 +99,7 @@ const DEV_SPECS: DevSpec[] = [
 export function EngineeringCrossSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const [showDevSpecs, setShowDevSpecs] = useState(false);
-  const [activeDevTab, setActiveDevTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(0);
 
   useLayoutEffect(() => {
     const prefersReduced =
@@ -116,18 +110,18 @@ export function EngineeringCrossSection() {
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        ".flow-step-card",
-        { opacity: 0.8, y: 15 },
+        ".flow-step",
+        { opacity: 0.6, y: 16 },
         {
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 72%",
-            end: "top 32%",
+            start: "top 70%",
+            end: "top 30%",
             scrub: 0.5,
           },
           opacity: 1,
           y: 0,
-          stagger: 0.08,
+          stagger: 0.1,
           ease: "power2.out",
         },
       );
@@ -140,115 +134,264 @@ export function EngineeringCrossSection() {
     <section
       ref={sectionRef}
       id="technical-proof"
-      className="w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 py-24 sm:py-32 flex flex-col justify-center box-border"
+      className="w-full"
+      style={{ background: "var(--mg-bg)" }}
     >
-      {/* ─── Left-Aligned Narrative ─── */}
-      <div className="w-full text-left mb-10 sm:mb-14">
-        <span className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-[var(--mg-brand)] block mb-3">
-          11 / UNDER THE HOOD
-        </span>
+      <div
+        className="mg-section"
+        style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "var(--section-py) var(--section-px)" }}
+      >
+        {/* ─── Header ─── */}
+        <div style={{ marginBottom: "clamp(3rem, 6vw, 5rem)" }}>
+          <div className="mg-micro" style={{ color: "var(--mg-text-muted)", marginBottom: "1rem", letterSpacing: "0.12em" }}>
+            11 — UNDER THE HOOD
+          </div>
 
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-[-0.04em] text-[var(--mg-text)] leading-[1.02] mb-3 max-w-[20ch] [text-wrap:balance]">
-          HOW MANDATEGUARD
-          <br />
-          CONNECTS THE DECISION
-          <br />
-          <span className="text-[var(--mg-brand)]">TO THE PAYMENT.</span>
-        </h2>
+          <h2 className="mg-display" style={{ color: "var(--mg-text)", maxWidth: "20ch", marginBottom: "1.5rem" }}>
+            How MandateGuard connects
+            <br />
+            <span className="mg-brand">the decision to the payment.</span>
+          </h2>
 
-        <p className="text-sm sm:text-base text-[var(--mg-text-secondary)] leading-relaxed max-w-[52ch]">
-          AI decides what it wants to buy. MandateGuard makes sure the purchase matches what the buyer actually approved.
-        </p>
-      </div>
+          <p className="mg-body" style={{ color: "var(--mg-text-secondary)", maxWidth: "52ch" }}>
+            AI decides what it wants. MandateGuard makes sure the purchase matches exactly
+            what the buyer approved — deterministically, without human review.
+          </p>
+        </div>
 
-      {/* ─── 5-Step Continuous System Flow (Human-First Architecture) ─── */}
-      <div className="w-full space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-3 relative">
-          {SYSTEM_FLOW.map((stepItem) => {
-            return (
-              <div
-                key={stepItem.step}
-                className={`flow-step-card p-4 sm:p-5 rounded-2xl border flex flex-col justify-between space-y-3 transition-all min-w-0 ${
-                  stepItem.highlight
-                    ? "border-[var(--mg-brand-line)] bg-[var(--mg-brand-soft)] shadow-sm"
-                    : "border-[var(--mg-border)] bg-[var(--mg-surface)] shadow-xs"
-                }`}
-              >
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-mono font-black text-[var(--mg-text-muted)]">
-                      {`STEP ${stepItem.step}`}
+        {/* ─── Architecture Flow ─── */}
+        <div style={{ marginBottom: "3rem" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `repeat(${FLOW_STEPS.length}, 1fr)`,
+              gap: "0.75rem",
+              position: "relative",
+            }}
+          >
+            {FLOW_STEPS.map((step, i) => (
+              <React.Fragment key={step.step}>
+                <div
+                  className="flow-step"
+                  style={{
+                    padding: "1.25rem 1rem",
+                    background: "var(--mg-surface)",
+                    border: "1px solid var(--mg-glass-1-border)",
+                    borderRadius: "0.75rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      marginBottom: "0.75rem",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: "var(--font-jetbrains-mono), monospace",
+                        fontSize: "0.5625rem",
+                        fontWeight: 700,
+                        color: "var(--mg-text-muted)",
+                        letterSpacing: "0.06em",
+                      }}
+                    >
+                      {step.step}
                     </span>
                     <span
-                      className={`px-2 py-0.5 rounded-full font-mono text-[9px] font-black ${
-                        stepItem.highlight
-                          ? "bg-[var(--mg-brand)] text-white"
-                          : "bg-[var(--mg-surface-subtle)] text-[var(--mg-text-secondary)] border border-[var(--mg-border)]"
-                      }`}
+                      style={{
+                        padding: "0.125rem 0.5rem",
+                        borderRadius: "0.25rem",
+                        background: i === 1 || i === 3 ? "var(--mg-brand-soft)" : "var(--mg-bg)",
+                        border: `1px solid ${i === 1 || i === 3 ? "rgba(11,92,255,0.2)" : "var(--mg-glass-1-border)"}`,
+                        fontFamily: "var(--font-jetbrains-mono), monospace",
+                        fontSize: "0.5625rem",
+                        fontWeight: 700,
+                        color: i === 1 || i === 3 ? "var(--mg-brand)" : "var(--mg-text-muted)",
+                        letterSpacing: "0.04em",
+                      }}
                     >
-                      {stepItem.badge}
+                      {step.badge}
                     </span>
-                  </div>
-
-                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--mg-brand)] mb-1">
-                    {stepItem.actor}
                   </div>
 
                   <div
-                    className="text-xs sm:text-sm font-bold text-[var(--mg-text)] leading-snug"
-                    dangerouslySetInnerHTML={{ __html: stepItem.summary }}
-                  />
+                    style={{
+                      fontFamily: "var(--font-jetbrains-mono), monospace",
+                      fontSize: "0.6875rem",
+                      fontWeight: 700,
+                      color: "var(--mg-brand)",
+                      marginBottom: "0.375rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {step.actor}
+                  </div>
+
+                  <div
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: "var(--mg-text)",
+                      lineHeight: 1.4,
+                      marginBottom: "0.5rem",
+                    }}
+                  >
+                    {step.summary}
+                  </div>
+
+                  <div
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.75rem",
+                      color: "var(--mg-text-muted)",
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    {step.detail}
+                  </div>
                 </div>
 
-                <div className="pt-2 border-t border-[var(--mg-border)] text-[11px] text-[var(--mg-text-secondary)] leading-normal">
-                  {stepItem.detail}
-                </div>
-              </div>
-            );
-          })}
+                {i < FLOW_STEPS.length - 1 && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: `calc(${(i + 1) * 100 / FLOW_STEPS.length}% - 0.75rem)`,
+                      transform: "translateY(-50%)",
+                      zIndex: 5,
+                      pointerEvents: "none",
+                    }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M2 6h8M7 3l3 3-3 3" stroke="var(--mg-text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
         </div>
 
-        {/* ─── Developer Secondary Progressive Disclosure ─── */}
-        <div className="pt-4 border-t border-[var(--mg-border)]">
-          <div className="flex justify-between items-center flex-wrap gap-2">
-            <span className="text-xs font-mono font-bold uppercase tracking-wider text-[var(--mg-text-muted)]">
+        {/* ─── Developer Details ─── */}
+        <div
+          style={{
+            borderTop: "1px solid var(--mg-glass-1-border)",
+            paddingTop: "1.5rem",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+            <span
+              style={{
+                fontFamily: "var(--font-jetbrains-mono), monospace",
+                fontSize: "0.6875rem",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: "0.1em",
+                color: "var(--mg-text-muted)",
+              }}
+            >
               FOR DEVELOPERS
             </span>
             <button
               onClick={() => setShowDevSpecs(!showDevSpecs)}
-              className="text-xs font-mono font-bold text-[var(--mg-brand)] hover:underline cursor-pointer min-h-[36px] flex items-center"
+              style={{
+                fontFamily: "var(--font-jetbrains-mono), monospace",
+                fontSize: "0.6875rem",
+                fontWeight: 700,
+                color: "var(--mg-brand)",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                textDecoration: "underline",
+              }}
             >
-              {showDevSpecs ? "Hide technical architecture ↑" : "How it works underneath →"}
+              {showDevSpecs ? "Hide technical detail ↑" : "Show technical detail →"}
             </button>
           </div>
 
           {showDevSpecs && (
-            <div className="mt-4 p-5 sm:p-7 rounded-2xl border border-[var(--mg-border)] bg-[var(--mg-surface)] shadow-lg space-y-4">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div
+              style={{
+                padding: "1.5rem",
+                background: "var(--mg-surface)",
+                border: "1px solid var(--mg-glass-1-border)",
+                borderRadius: "0.75rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: `repeat(${DEV_SPECS.length}, 1fr)`,
+                  gap: "0.5rem",
+                  marginBottom: "1.25rem",
+                }}
+              >
                 {DEV_SPECS.map((spec, i) => (
                   <button
                     key={spec.id}
-                    onClick={() => setActiveDevTab(i)}
-                    className={`p-2.5 rounded-xl border text-left font-mono transition-all cursor-pointer min-w-0 ${
-                      activeDevTab === i
-                        ? "border-[var(--mg-brand)] bg-[var(--mg-brand-soft)] text-[var(--mg-brand)] font-bold shadow-xs"
-                        : "border-[var(--mg-border)] bg-[var(--mg-bg)] text-[var(--mg-text-muted)] hover:border-[var(--mg-border-strong)]"
-                    }`}
+                    onClick={() => setActiveTab(i)}
+                    style={{
+                      padding: "0.625rem 0.875rem",
+                      borderRadius: "0.5rem",
+                      border: `1px solid ${activeTab === i ? "var(--mg-brand)" : "var(--mg-glass-1-border)"}`,
+                      background: activeTab === i ? "var(--mg-brand-soft)" : "var(--mg-bg)",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      transition: "all 0.2s ease",
+                    }}
                   >
-                    <span className="text-[11px] block truncate">{spec.title}</span>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-jetbrains-mono), monospace",
+                        fontSize: "0.625rem",
+                        fontWeight: 700,
+                        color: activeTab === i ? "var(--mg-brand)" : "var(--mg-text-muted)",
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      {spec.title}
+                    </div>
                   </button>
                 ))}
               </div>
 
-              <div className="space-y-3">
-                <p className="text-xs font-mono text-[var(--mg-text-secondary)]">
-                  {DEV_SPECS[activeDevTab].desc}
-                </p>
-                <div className="p-4 rounded-xl bg-[var(--mg-bg)] border border-[var(--mg-border)] font-mono text-xs overflow-x-auto text-[var(--mg-text)] shadow-inner">
-                  <pre className="m-0">
-                    <code>{DEV_SPECS[activeDevTab].snippet}</code>
-                  </pre>
-                </div>
+              <p
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "0.875rem",
+                  color: "var(--mg-text-secondary)",
+                  marginBottom: "1rem",
+                }}
+              >
+                {DEV_SPECS[activeTab].desc}
+              </p>
+
+              <div
+                style={{
+                  padding: "1.25rem",
+                  background: "var(--mg-bg)",
+                  border: "1px solid var(--mg-glass-1-border)",
+                  borderRadius: "0.5rem",
+                  overflow: "auto",
+                }}
+              >
+                <pre
+                  style={{
+                    margin: 0,
+                    fontFamily: "var(--font-jetbrains-mono), monospace",
+                    fontSize: "0.75rem",
+                    color: "var(--mg-text)",
+                    lineHeight: 1.6,
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  <code>{DEV_SPECS[activeTab].code}</code>
+                </pre>
               </div>
             </div>
           )}

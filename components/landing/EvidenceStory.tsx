@@ -15,19 +15,38 @@ export function EvidenceStory() {
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        ".evidence-rule-item",
-        { opacity: 0.8, y: 8 },
+        ".evidence-stat",
+        { opacity: 0, y: 30 },
         {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power3.out",
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top 70%",
-            end: "top 30%",
-            scrub: 0.5,
+            end: "top 25%",
+            scrub: false,
           },
+        },
+      );
+
+      gsap.fromTo(
+        ".evidence-detail",
+        { opacity: 0, y: 16 },
+        {
           opacity: 1,
           y: 0,
-          stagger: 0.06,
+          duration: 0.6,
+          stagger: 0.1,
           ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 55%",
+            end: "top 20%",
+            scrub: false,
+          },
         },
       );
     }, sectionRef);
@@ -39,104 +58,259 @@ export function EvidenceStory() {
     <section
       ref={sectionRef}
       id="what-we-measure"
-      className="w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 py-24 sm:py-32 flex flex-col justify-center box-border"
+      className="w-full"
+      style={{ background: "var(--mg-bg)" }}
     >
-      {/* ─── Left-Aligned Narrative ─── */}
-      <div className="w-full text-left mb-10 sm:mb-12">
-        <span className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-[var(--mg-brand)] block mb-3">
-          10 / THE PROOF
-        </span>
+      {/* ─── Full-width editorial dark band ─── */}
+      <div
+        style={{
+          background: "var(--mg-surface)",
+          borderTop: "1px solid var(--mg-glass-1-border)",
+          borderBottom: "1px solid var(--mg-glass-1-border)",
+        }}
+      >
+        <div
+          className="mg-section"
+          style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "var(--section-py) var(--section-px)" }}
+        >
+          {/* Section label */}
+          <div
+            className="evidence-detail mg-micro"
+            style={{
+              color: "var(--mg-text-muted)",
+              marginBottom: "clamp(2rem, 4vw, 3rem)",
+              letterSpacing: "0.12em",
+            }}
+          >
+            10 — THE PROOF
+          </div>
 
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-[-0.04em] text-[var(--mg-text)] leading-[1.02] mb-3 max-w-[16ch] [text-wrap:balance]">
-          MAKE AI
-          <br />
-          <span className="text-[var(--mg-brand)]">A BETTER BUYER.</span>
-        </h2>
-
-        <p className="text-sm sm:text-base text-[var(--mg-text-secondary)] leading-relaxed max-w-[50ch]">
-          Every important decision has a record. From initial search and verified commitments to exact authorized snapshots, MandateGuard ensures complete transparency.
-        </p>
-      </div>
-
-      {/* ─── Editorial Hairline Proof Wall ─── */}
-      <div className="w-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-[var(--mg-border)]">
-          {/* Item 1 */}
-          <div className="evidence-rule-item space-y-1.5 pb-4 border-b md:border-b-0 border-[var(--mg-border-subtle)] min-w-0">
-            <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-brand)] tracking-widest block">
-              01 · MACHINE-READABLE OFFER
-            </span>
-            <div className="text-base sm:text-lg font-bold text-[var(--mg-text)] tracking-tight">
-              What the Buyer Saw
-            </div>
-            <p className="text-xs text-[var(--mg-text-secondary)] leading-relaxed">
-              Every commercial commitment is cryptographically signed, versioned, and indexed with a SHA-256 version hash.
+          {/* Editorial Headline */}
+          <div
+            className="evidence-detail"
+            style={{ marginBottom: "clamp(3rem, 6vw, 5rem)" }}
+          >
+            <h2
+              className="mg-display"
+              style={{ color: "var(--mg-text)", maxWidth: "16ch" }}
+            >
+              Every decision
+              <br />
+              <span className="mg-brand">accountable.</span>
+            </h2>
+            <p
+              className="mg-body"
+              style={{
+                marginTop: "1.5rem",
+                maxWidth: "52ch",
+                color: "var(--mg-text-secondary)",
+              }}
+            >
+              From first buyer request to final transaction, every judgment is
+              recorded, versioned, and verifiable. No black boxes.
             </p>
           </div>
 
-          {/* Item 2 */}
-          <div className="evidence-rule-item space-y-1.5 pb-4 border-b md:border-b-0 border-[var(--mg-border-subtle)] min-w-0">
-            <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-brand)] tracking-widest block">
-              02 · VERIFIED COMMITMENTS
-            </span>
-            <div className="text-base sm:text-lg font-bold text-[var(--mg-text)] tracking-tight">
-              What Was Grounded
+          {/* ─── Editorial Number Wall ─── */}
+          <div
+            className="evidence-detail"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "clamp(2rem, 4vw, 3rem)",
+              paddingTop: "clamp(2rem, 4vw, 3rem)",
+              borderTop: "1px solid var(--mg-glass-1-border)",
+            }}
+          >
+            {/* Stat 1 */}
+            <div className="evidence-stat">
+              <div
+                className="mg-number-display"
+                style={{
+                  color: "var(--mg-text)",
+                  lineHeight: "0.95",
+                  letterSpacing: "-0.05em",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                100
+              </div>
+              <div
+                style={{
+                  fontSize: "0.6875rem",
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: "var(--mg-brand)",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                MISSIONS TESTED
+              </div>
+              <p
+                className="mg-small"
+                style={{ color: "var(--mg-text-muted)", maxWidth: "28ch" }}
+              >
+                Buyer requests evaluated against live market conditions.
+              </p>
             </div>
-            <p className="text-xs text-[var(--mg-text-secondary)] leading-relaxed">
-              Zero semantic hallucination: rankings reflect only explicit, verified merchant terms.
-            </p>
+
+            {/* Stat 2 */}
+            <div className="evidence-stat">
+              <div
+                className="mg-number-display"
+                style={{
+                  color: "var(--mg-text)",
+                  lineHeight: "0.95",
+                  letterSpacing: "-0.05em",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                91.7
+                <span style={{ fontSize: "0.45em", color: "var(--mg-text-muted)" }}>%</span>
+              </div>
+              <div
+                style={{
+                  fontSize: "0.6875rem",
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: "var(--mg-success)",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                RECOMMENDATION ACCURACY
+              </div>
+              <p
+                className="mg-small"
+                style={{ color: "var(--mg-text-muted)", maxWidth: "28ch" }}
+              >
+                AI choices grounded in verified merchant commitments only.
+              </p>
+            </div>
+
+            {/* Stat 3 */}
+            <div className="evidence-stat">
+              <div
+                className="mg-number-display"
+                style={{
+                  color: "var(--mg-text)",
+                  lineHeight: "0.95",
+                  letterSpacing: "-0.05em",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                0
+                <span style={{ fontSize: "0.45em", color: "var(--mg-text-muted)" }}>%</span>
+              </div>
+              <div
+                style={{
+                  fontSize: "0.6875rem",
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: "var(--mg-success)",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                HARD-CONSTRAINT VIOLATIONS
+              </div>
+              <p
+                className="mg-small"
+                style={{ color: "var(--mg-text-muted)", maxWidth: "28ch" }}
+              >
+                Budget caps, SLA requirements, and format constraints enforced.
+              </p>
+            </div>
+
+            {/* Stat 4 */}
+            <div className="evidence-stat">
+              <div
+                className="mg-number-display"
+                style={{
+                  color: "var(--mg-text)",
+                  lineHeight: "0.95",
+                  letterSpacing: "-0.05em",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                100
+                <span style={{ fontSize: "0.45em", color: "var(--mg-text-muted)" }}>%</span>
+              </div>
+              <div
+                style={{
+                  fontSize: "0.6875rem",
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: "var(--mg-brand)",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                GROUNDED DECISIONS
+              </div>
+              <p
+                className="mg-small"
+                style={{ color: "var(--mg-text-muted)", maxWidth: "28ch" }}
+              >
+                Every recommendation tied to authoritative offer data.
+              </p>
+            </div>
           </div>
 
-          {/* Item 3 */}
-          <div className="evidence-rule-item space-y-1.5 pb-4 border-b md:border-b-0 border-[var(--mg-border-subtle)] min-w-0">
-            <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-brand)] tracking-widest block">
-              03 · BUYER INTENT
-            </span>
-            <div className="text-base sm:text-lg font-bold text-[var(--mg-text)] tracking-tight">
-              What Constraints Applied
-            </div>
-            <p className="text-xs text-[var(--mg-text-secondary)] leading-relaxed">
-              Price caps, mentor requirements, and SLAs are enforced as hard boolean gates.
-            </p>
-          </div>
-
-          {/* Item 4 */}
-          <div className="evidence-rule-item space-y-1.5 pb-4 border-b md:border-b-0 border-[var(--mg-border-subtle)] min-w-0">
-            <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-brand)] tracking-widest block">
-              04 · SELECTION REASON
-            </span>
-            <div className="text-base sm:text-lg font-bold text-[var(--mg-text)] tracking-tight">
-              Why It Was Chosen
-            </div>
-            <p className="text-xs text-[var(--mg-text-secondary)] leading-relaxed">
-              Auditable decision trail showing exact verified factors for every single transaction.
-            </p>
-          </div>
-
-          {/* Item 5 */}
-          <div className="evidence-rule-item space-y-1.5 pb-4 border-b md:border-b-0 border-[var(--mg-border-subtle)] min-w-0">
-            <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-brand)] tracking-widest block">
-              05 · AUTHORIZATION STATE
-            </span>
-            <div className="text-base sm:text-lg font-bold text-[var(--mg-text)] tracking-tight">
-              What Was Approved
-            </div>
-            <p className="text-xs text-[var(--mg-text-secondary)] leading-relaxed">
-              Buyer authorizations are snapshot-bound, preventing mid-cycle term drift.
-            </p>
-          </div>
-
-          {/* Item 6 */}
-          <div className="evidence-rule-item space-y-1.5 pb-4 border-b md:border-b-0 border-[var(--mg-border-subtle)] min-w-0">
-            <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-brand)] tracking-widest block">
-              06 · PROTECTION STATE
-            </span>
-            <div className="text-base sm:text-lg font-bold text-[var(--mg-text)] tracking-tight">
-              What Was Gated
-            </div>
-            <p className="text-xs text-[var(--mg-text-secondary)] leading-relaxed">
-              Zero provider mutations execute outside the strictly gated executor boundary.
-            </p>
+          {/* ─── Architecture Principle ─── */}
+          <div
+            className="evidence-detail"
+            style={{
+              marginTop: "clamp(3rem, 5vw, 4rem)",
+              paddingTop: "clamp(2rem, 4vw, 3rem)",
+              borderTop: "1px solid var(--mg-glass-1-border)",
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: "clamp(1.5rem, 3vw, 2.5rem)",
+            }}
+          >
+            {[
+              {
+                label: "COMMITMENT",
+                detail: "Every commercial clause is cryptographically signed and versioned.",
+              },
+              {
+                label: "AUTHORIZATION",
+                detail: "Buyer-approved terms locked into an immutable snapshot.",
+              },
+              {
+                label: "EXECUTION",
+                detail: "Payment gates on exact term match, enforced deterministically.",
+              },
+              {
+                label: "AUDIT",
+                detail: "Full decision trail from buyer request to transaction outcome.",
+              },
+            ].map((item) => (
+              <div key={item.label}>
+                <div
+                  style={{
+                    fontSize: "0.6875rem",
+                    fontFamily: "var(--font-jetbrains-mono), monospace",
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.1em",
+                    color: "var(--mg-brand)",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  {item.label}
+                </div>
+                <p className="mg-small" style={{ color: "var(--mg-text-secondary)" }}>
+                  {item.detail}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -3,50 +3,18 @@
 import React, { useRef, useState, useLayoutEffect } from "react";
 import { gsap } from "@/lib/gsap";
 
-interface MarketOffer {
-  id: string;
-  rank: number;
-  name: string;
-  price: string;
-  traits: string;
-  verdict: string;
-  isMerchant?: boolean;
-}
-
-const INITIAL_OFFERS: MarketOffer[] = [
-  {
-    id: "sd_pro",
-    rank: 1,
-    name: "SYSTEM DESIGN PRO",
-    price: "₹3,499",
-    traits: "1:1 Human mentor · 24h SLA",
-    verdict: "✓ Fits budget · Verified 1:1 mentor & 24h SLA",
-  },
-  {
-    id: "interview_acc",
-    rank: 2,
-    name: "INTERVIEW ACCELERATOR",
-    price: "₹3,799",
-    traits: "Mock rounds · Group QA",
-    verdict: "✓ Fits budget · Group QA (No 1:1 mentor)",
-  },
-  {
-    id: "your_business",
-    rank: 3,
-    name: "YOUR BUSINESS",
-    price: "₹3,999",
-    traits: "Expert guidance · Recordings",
-    verdict: "⚠ Unclear format · Unclear turnaround SLA",
-    isMerchant: true,
-  },
+const INITIAL_OFFERS = [
+  { id: "sd_pro", rank: 1, name: "System Design Pro", price: "₹3,499", traits: "1:1 mentor · 24h SLA", verdict: "Fits budget · Verified mentor & SLA" },
+  { id: "interview_acc", rank: 2, name: "Interview Accelerator", price: "₹3,799", traits: "Mock rounds · Group QA", verdict: "Fits budget · Group sessions only" },
+  { id: "your_business", rank: 3, name: "Your Business", price: "₹3,999", traits: "Expert guidance · Recordings", verdict: "Unclear format · Unclear SLA", isMerchant: true },
 ];
 
 export function RankingExperience() {
   const sectionRef = useRef<HTMLElement>(null);
-  const rowsContainerRef = useRef<HTMLDivElement>(null);
-  const [offers] = useState<MarketOffer[]>(INITIAL_OFFERS);
-  const [selectedRank, setSelectedRank] = useState<number>(3);
-  const [isSweeping, setIsSweeping] = useState<boolean>(false);
+  const [offers] = useState(INITIAL_OFFERS);
+  const [merchantRank, setMerchantRank] = useState(3);
+  const [isImproving, setIsImproving] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
   useLayoutEffect(() => {
     const prefersReduced =
@@ -56,15 +24,14 @@ export function RankingExperience() {
     if (prefersReduced || !sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Subtle scan highlight on scroll
       gsap.fromTo(
         ".ranking-row",
         { opacity: 0.85, y: 12 },
         {
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 65%",
-            end: "top 35%",
+            start: "top 68%",
+            end: "top 30%",
             scrub: 0.5,
           },
           opacity: 1,
@@ -78,131 +45,324 @@ export function RankingExperience() {
     return () => ctx.revert();
   }, []);
 
-  const handleSweep = () => {
-    setIsSweeping(true);
+  const handleImprove = () => {
+    if (isImproving) return;
+    setIsImproving(true);
+    setShowResult(false);
+
     setTimeout(() => {
-      setIsSweeping(false);
-      setSelectedRank(3);
-    }, 700);
+      setMerchantRank(2);
+    }, 500);
+
+    setTimeout(() => {
+      setMerchantRank(1);
+      setShowResult(true);
+      setIsImproving(false);
+    }, 1200);
+  };
+
+  const handleReset = () => {
+    setMerchantRank(3);
+    setShowResult(false);
+    setIsImproving(false);
   };
 
   return (
     <section
       ref={sectionRef}
       id="ai-ranking"
-      className="w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 py-24 sm:py-32 flex flex-col justify-center box-border"
+      className="w-full"
+      style={{ background: "var(--mg-bg)" }}
     >
-      {/* ─── Left-Aligned Headline ─── */}
-      <div className="w-full text-left mb-10 sm:mb-12">
-        <span className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-[var(--mg-brand)] block mb-3">
-          03 / THE MARKET
-        </span>
-
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-[-0.04em] text-[var(--mg-text)] leading-[1.02] mb-3 max-w-[18ch] [text-wrap:balance]">
-          When AI becomes the buyer,
-          <br />
-          <span className="text-[var(--mg-brand)]">ranking becomes the storefront.</span>
-        </h2>
-
-        <p className="text-sm sm:text-base text-[var(--mg-text-secondary)] leading-relaxed max-w-[50ch]">
-          When AI chooses, your position matters. AI ranks the clearest matching offer first and skips ambiguous claims.
-        </p>
-      </div>
-
-      {/* ─── Full-Width Ranking Experience ─── */}
-      <div className="w-full space-y-4">
-        {/* Buyer Criteria Bar */}
-        <div className="p-4 rounded-xl bg-[var(--mg-brand-soft)] border border-[var(--mg-brand-line)] flex flex-wrap justify-between items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[var(--mg-brand)] animate-pulse" />
-            <span className="text-[10px] font-mono font-black uppercase tracking-widest text-[var(--mg-brand)]">
-              BUYER HARD CONSTRAINTS
-            </span>
+      <div
+        className="mg-section"
+        style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "var(--section-py) var(--section-px)" }}
+      >
+        {/* ─── Editorial Header ─── */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "clamp(2rem, 4vw, 4rem)",
+            alignItems: "start",
+            marginBottom: "clamp(3rem, 6vw, 5rem)",
+          }}
+        >
+          <div>
+            <div className="mg-micro" style={{ color: "var(--mg-text-muted)", marginBottom: "1rem", letterSpacing: "0.12em" }}>
+              03 — THE MARKET
+            </div>
+            <h2 className="mg-display" style={{ color: "var(--mg-text)", maxWidth: "16ch" }}>
+              When AI becomes
+              <br />
+              <span className="mg-brand">the buyer,</span>
+            </h2>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 text-xs font-mono font-bold">
-            <span className="px-3 py-1 rounded-lg bg-[var(--mg-surface)] border border-[var(--mg-border)] text-[var(--mg-text)]">
-              UNDER ₹4,000
-            </span>
-            <span className="px-3 py-1 rounded-lg bg-[var(--mg-surface)] border border-[var(--mg-border)] text-[var(--mg-text)]">
-              HUMAN MENTOR
-            </span>
-            <span className="px-3 py-1 rounded-lg bg-[var(--mg-surface)] border border-[var(--mg-border)] text-[var(--mg-text)]">
-              24H RESPONSE
-            </span>
-            <button
-              onClick={handleSweep}
-              className="px-3.5 py-1 rounded-lg bg-[var(--mg-brand)] text-white text-xs font-mono font-black shadow-sm cursor-pointer hover:bg-[var(--mg-brand-hover)] transition-all min-h-[36px]"
-            >
-              {isSweeping ? "Evaluating..." : "Run AI Market Sweep ➔"}
-            </button>
+          <div style={{ paddingTop: "0.5rem" }}>
+            <p className="mg-body" style={{ color: "var(--mg-text-secondary)", maxWidth: "44ch" }}>
+              AI ranks the clearest matching offer first. If your offer has ambiguous
+              terms, it loses to a competitor who was explicit.
+            </p>
+            <p className="mg-body" style={{ color: "var(--mg-text-secondary)", maxWidth: "44ch", marginTop: "1rem" }}>
+              Your position is your storefront. Make it unambiguous.
+            </p>
           </div>
         </div>
 
-        {/* Generous Leaderboard Rows */}
-        <div
-          ref={rowsContainerRef}
-          className="border border-[var(--mg-border)] rounded-2xl bg-[var(--mg-surface)] overflow-hidden divide-y divide-[var(--mg-border)] shadow-md"
-        >
-          {offers.map((offer) => {
-            const isSelected = selectedRank === offer.rank;
-            const isMerchant = offer.isMerchant;
-
-            return (
+        {/* ─── Ranking Board ─── */}
+        <div style={{ marginBottom: "1.5rem" }}>
+          {/* Buyer criteria strip */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "0.75rem",
+              padding: "1rem 1.25rem",
+              background: "var(--mg-surface)",
+              border: "1px solid var(--mg-glass-1-border)",
+              borderRadius: "0.75rem 0.75rem 0 0",
+              borderBottom: "none",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
               <div
-                key={offer.id}
-                onClick={() => setSelectedRank(offer.rank)}
-                className={`ranking-row p-5 sm:p-7 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer transition-all duration-300 ${
-                  isMerchant
-                    ? "bg-amber-500/[0.08] border-l-4 border-l-amber-500"
-                    : isSelected
-                    ? "bg-[var(--mg-surface-elevated)] border-l-4 border-l-[var(--mg-brand)]"
-                    : "hover:bg-[var(--mg-surface-subtle)] border-l-4 border-l-transparent"
-                }`}
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  background: "var(--mg-brand)",
+                  animation: "blink 1.8s ease-in-out infinite",
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontSize: "0.6875rem",
+                  fontWeight: 700,
+                  color: "var(--mg-text-muted)",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
               >
-                {/* Left: Position & Offer Information */}
-                <div className="flex items-center gap-4 min-w-0">
-                  <span className="font-mono text-2xl sm:text-3xl font-extrabold text-[var(--mg-text-muted)] min-w-[2ch]">
-                    0{offer.rank}
-                  </span>
+                Buyer Hard Constraints
+              </span>
+            </div>
 
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2.5 flex-wrap">
-                      <h4 className="text-lg sm:text-xl font-bold text-[var(--mg-text)] tracking-tight truncate">
+            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+              {["≤ ₹4,000", "Human Mentor", "24h Response"].map((c) => (
+                <span
+                  key={c}
+                  style={{
+                    padding: "0.25rem 0.75rem",
+                    background: "var(--mg-bg)",
+                    border: "1px solid var(--mg-glass-1-border)",
+                    borderRadius: "0.375rem",
+                    fontFamily: "var(--font-jetbrains-mono), monospace",
+                    fontSize: "0.6875rem",
+                    fontWeight: 600,
+                    color: "var(--mg-text-secondary)",
+                  }}
+                >
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Ranking rows */}
+          <div
+            style={{
+              border: "1px solid var(--mg-glass-1-border)",
+              borderRadius: "0 0 0.75rem 0.75rem",
+              overflow: "hidden",
+            }}
+          >
+            {offers.map((offer) => {
+              const isMerchant = offer.isMerchant;
+              const currentRank = isMerchant ? merchantRank : (offer.rank < merchantRank ? offer.rank : offer.rank + (merchantRank <= offer.rank ? 1 : 0));
+              const isWinner = currentRank === 1 && isMerchant;
+              const isSecond = currentRank === 2 && isMerchant;
+              const isLoser = isMerchant && merchantRank === 3;
+
+              return (
+                <div
+                  key={offer.id}
+                  className="ranking-row"
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "4rem 1fr auto",
+                    alignItems: "center",
+                    gap: "1rem",
+                    padding: "1.25rem 1.5rem",
+                    background: isWinner
+                      ? "rgba(16, 185, 129, 0.06)"
+                      : isMerchant
+                      ? "rgba(245, 158, 11, 0.04)"
+                      : "var(--mg-surface)",
+                    borderTop: "1px solid var(--mg-glass-1-border)",
+                    transition: "background 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+                  }}
+                >
+                  {/* Rank number */}
+                  <div
+                    style={{
+                      fontFamily: "var(--font-space-grotesk), sans-serif",
+                      fontSize: "2rem",
+                      fontWeight: 700,
+                      letterSpacing: "-0.04em",
+                      color: isWinner
+                        ? "var(--mg-success)"
+                        : isMerchant
+                        ? "var(--mg-warning)"
+                        : "var(--mg-text-muted)",
+                      lineHeight: 1,
+                      transition: "color 0.4s ease",
+                    }}
+                  >
+                    {String(currentRank).padStart(2, "0")}
+                  </div>
+
+                  {/* Offer info */}
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
+                      <span
+                        style={{
+                          fontFamily: "var(--font-inter), sans-serif",
+                          fontSize: "1rem",
+                          fontWeight: 700,
+                          color: isMerchant ? "var(--mg-text)" : "var(--mg-text)",
+                        }}
+                      >
                         {offer.name}
-                      </h4>
+                      </span>
+
                       {isMerchant && (
-                        <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-500 font-mono text-[10px] font-black">
-                          POSITION #3
+                        <span
+                          className="mg-pill"
+                          style={{
+                            background: isWinner
+                              ? "var(--mg-success-soft)"
+                              : isSecond
+                              ? "var(--mg-warning-soft)"
+                              : "rgba(245,158,11,0.1)",
+                            color: isWinner ? "var(--mg-success)" : isSecond ? "var(--mg-warning)" : "var(--mg-text-muted)",
+                            border: isWinner
+                              ? "1px solid rgba(16,185,129,0.2)"
+                              : "1px solid rgba(245,158,11,0.2)",
+                          }}
+                        >
+                          {isWinner ? "✓ #1 WINNER" : isSecond ? "↑ #2" : "#3 BELOW LINE"}
                         </span>
                       )}
                     </div>
-                    <p className="text-xs sm:text-sm text-[var(--mg-text-secondary)] font-mono mt-0.5 truncate">
+                    <div
+                      style={{
+                        fontFamily: "var(--font-jetbrains-mono), monospace",
+                        fontSize: "0.75rem",
+                        color: "var(--mg-text-muted)",
+                      }}
+                    >
                       {offer.traits}
-                    </p>
+                    </div>
                   </div>
-                </div>
 
-                {/* Right: Price & Verdict */}
-                <div className="text-left md:text-right space-y-0.5">
-                  <div className="text-xl sm:text-2xl font-bold font-mono text-[var(--mg-text)] tracking-tight">
-                    {offer.price}
-                    <span className="text-xs font-normal text-[var(--mg-text-muted)] font-sans"> / mo</span>
-                  </div>
-                  <div className="text-xs font-mono text-[var(--mg-text-secondary)]">
-                    {offer.verdict}
+                  {/* Price + verdict */}
+                  <div style={{ textAlign: "right" }}>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-space-grotesk), sans-serif",
+                        fontSize: "1.25rem",
+                        fontWeight: 700,
+                        color: "var(--mg-text)",
+                        letterSpacing: "-0.02em",
+                      }}
+                    >
+                      {offer.price}
+                      <span
+                        style={{
+                          fontSize: "0.75rem",
+                          fontWeight: 500,
+                          color: "var(--mg-text-muted)",
+                          marginLeft: "0.25rem",
+                        }}
+                      >
+                        /mo
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        fontFamily: "var(--font-jetbrains-mono), monospace",
+                        fontSize: "0.6875rem",
+                        color: isMerchant && isLoser ? "var(--mg-warning)" : "var(--mg-text-secondary)",
+                        marginTop: "0.25rem",
+                      }}
+                    >
+                      {isMerchant && isLoser ? offer.verdict : offer.verdict}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
 
-        <div className="p-1 flex justify-between items-center text-xs font-mono text-[var(--mg-text-muted)]">
-          <span>AI evaluates hard constraints first.</span>
-          <span className="text-amber-500 font-bold">Your Business: Position #3</span>
+        {/* ─── Action Bar ─── */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-jetbrains-mono), monospace",
+              fontSize: "0.75rem",
+              color: merchantRank === 1 ? "var(--mg-success)" : "var(--mg-text-muted)",
+            }}
+          >
+            {merchantRank === 1
+              ? "✓ Your Business is #1 — AI chose you."
+              : merchantRank === 2
+              ? "↑ Your Business moved to #2 — missing some verified terms."
+              : "↓ Your Business is #3 — AI cannot verify key commitments."}
+          </div>
+
+          <div style={{ display: "flex", gap: "0.75rem" }}>
+            {merchantRank !== 3 && (
+              <button
+                onClick={handleReset}
+                className="mg-btn-secondary"
+                style={{ fontSize: "0.8125rem", padding: "0.5rem 1.25rem" }}
+              >
+                Reset
+              </button>
+            )}
+            {merchantRank !== 1 && (
+              <button
+                onClick={handleImprove}
+                disabled={isImproving}
+                className="mg-btn-primary"
+                style={{ fontSize: "0.8125rem", padding: "0.5rem 1.25rem" }}
+              >
+                {isImproving ? "Improving..." : showResult ? "✓ Improved" : "Improve Offer →"}
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
+        }
+      `}</style>
     </section>
   );
 }

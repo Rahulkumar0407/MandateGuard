@@ -3,9 +3,18 @@
 import React, { useRef, useState, useLayoutEffect } from "react";
 import { gsap } from "@/lib/gsap";
 
+type Claim = "price" | "billing" | "mentor" | "response";
+
+const CLAIMS: { id: Claim; label: string; value: string; status: "verified" | "unverified"; reason?: string }[] = [
+  { id: "price", label: "Price", value: "₹3,999/month", status: "verified" },
+  { id: "billing", label: "Billing", value: "Monthly recurring", status: "verified" },
+  { id: "mentor", label: "Human mentor", value: '"Expert guidance"', status: "unverified", reason: "'Expert guidance' lacks a 1:1 human format clause." },
+  { id: "response", label: "Response time", value: '"Slack access"', status: "unverified", reason: "'Slack access' lacks a machine-enforceable 24h SLA clause." },
+];
+
 export function BuyerInvestigation() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [inspectedClaim, setInspectedClaim] = useState<string>("mentor");
+  const [activeClaim, setActiveClaim] = useState<Claim | null>(null);
 
   useLayoutEffect(() => {
     const prefersReduced =
@@ -16,17 +25,18 @@ export function BuyerInvestigation() {
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        ".investigation-card",
-        { y: 25, opacity: 0.85 },
+        ".investigation-item",
+        { opacity: 0.6, x: -12 },
         {
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 70%",
-            end: "top 35%",
+            start: "top 68%",
+            end: "top 30%",
             scrub: 0.5,
           },
-          y: 0,
           opacity: 1,
+          x: 0,
+          stagger: 0.08,
           ease: "power2.out",
         },
       );
@@ -39,129 +49,242 @@ export function BuyerInvestigation() {
     <section
       ref={sectionRef}
       id="why-buyers-leave"
-      className="w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 py-24 sm:py-32 flex flex-col justify-center box-border"
+      className="w-full"
+      style={{ background: "var(--mg-bg)" }}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-        {/* ─── Left: Editorial Narrative Column ─── */}
-        <div className="lg:col-span-5 text-left space-y-4 lg:sticky lg:top-32">
-          <span className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-[var(--mg-brand)] block mb-3">
-            04 / THE INVESTIGATION
-          </span>
-
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-[-0.04em] text-[var(--mg-text)] leading-[1.02] max-w-[14ch] [text-wrap:balance]">
-            YOU&apos;RE NOT LOSING
-            <br />
-            BECAUSE YOU&apos;RE BAD.
-          </h2>
-
-          <div className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-[-0.035em] text-[var(--mg-brand)] leading-[1.05] [text-wrap:balance]">
-            AI JUST COULDN&apos;T
-            <br />
-            VERIFY THE PROMISE.
+      <div
+        className="mg-section"
+        style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "var(--section-py) var(--section-px)" }}
+      >
+        {/* ─── Header: Why you lost ─── */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "clamp(2rem, 5vw, 5rem)",
+            alignItems: "start",
+            marginBottom: "clamp(3rem, 6vw, 5rem)",
+          }}
+        >
+          <div>
+            <div className="mg-micro" style={{ color: "var(--mg-text-muted)", marginBottom: "1rem", letterSpacing: "0.12em" }}>
+              04 — THE INVESTIGATION
+            </div>
+            <h2 className="mg-display" style={{ color: "var(--mg-text)", maxWidth: "12ch" }}>
+              You&apos;re not losing
+              <br />
+              <span style={{ color: "var(--mg-text-muted)" }}>because you&apos;re bad.</span>
+            </h2>
           </div>
 
-          <p className="text-sm sm:text-base text-[var(--mg-text-secondary)] leading-relaxed max-w-[45ch]">
-            AI just couldn&apos;t verify what you promised. Human buyers might read between the lines, but AI buyers only evaluate explicit commitments.
-          </p>
-
-          <div className="pt-2 hidden lg:block text-xs font-mono text-[var(--mg-text-muted)]">
-            <span>Tap any unverified claim to reveal the cause ➔</span>
+          <div style={{ paddingTop: "0.5rem" }}>
+            <p className="mg-body" style={{ color: "var(--mg-text-secondary)", maxWidth: "44ch" }}>
+              AI just couldn&apos;t verify what you promised. Human buyers read between the lines.
+              AI buyers only evaluate explicit commitments.
+            </p>
+            <div
+              style={{
+                marginTop: "1.5rem",
+                padding: "1rem 1.25rem",
+                background: "var(--mg-surface)",
+                border: "1px solid var(--mg-glass-1-border)",
+                borderRadius: "0.75rem",
+              }}
+            >
+              <div
+                style={{
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontSize: "0.6875rem",
+                  color: "var(--mg-text-muted)",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                YOUR BUSINESS
+              </div>
+              <div
+                style={{
+                  fontFamily: "var(--font-inter), sans-serif",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  color: "var(--mg-text)",
+                  fontStyle: "italic",
+                }}
+              >
+                &ldquo;Expert guidance &amp; recordings for distributed systems interview prep.&rdquo;
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* ─── Right: Forensic Offer Sheet ─── */}
-        <div className="lg:col-span-7 w-full">
-          <div className="investigation-card p-6 sm:p-10 rounded-2xl border border-[var(--mg-border)] bg-[var(--mg-surface)] shadow-lg space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-start flex-wrap gap-4 border-b border-[var(--mg-border)] pb-6">
-              <div>
-                <span className="text-[10px] font-mono uppercase font-bold text-amber-500 tracking-widest block mb-1">
-                  LET&apos;S SEE WHAT AI SAW (CLICK TO INSPECT)
-                </span>
-                <h3 className="text-xl sm:text-2xl font-bold text-[var(--mg-text)] tracking-tight truncate">
-                  YOUR BUSINESS (InterviewForge)
-                </h3>
-                <p className="text-xs text-[var(--mg-text-secondary)] font-mono mt-0.5">
-                  &ldquo;Expert guidance &amp; recordings for distributed systems interview prep.&rdquo;
-                </p>
-              </div>
-
-              <div className="text-left sm:text-right">
-                <span className="text-2xl sm:text-3xl font-bold font-mono text-[var(--mg-text)] block tracking-tight">
-                  ₹3,999
-                </span>
-                <span className="text-xs text-[var(--mg-text-muted)] font-mono">
-                  / month
-                </span>
-              </div>
-            </div>
-
-            {/* 4 Simple Claims */}
-            <div className="space-y-3 font-mono text-xs sm:text-sm">
+        {/* ─── Forensic Inspection Table ─── */}
+        <div
+          style={{
+            background: "var(--mg-surface)",
+            border: "1px solid var(--mg-glass-1-border)",
+            borderRadius: "1rem",
+            overflow: "hidden",
+          }}
+        >
+          {/* Table header */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 2fr 1fr",
+              gap: "1rem",
+              padding: "1rem 1.5rem",
+              borderBottom: "1px solid var(--mg-glass-1-border)",
+              background: "var(--mg-bg)",
+            }}
+          >
+            {["CRITERION", "WHAT AI SAW", "VERDICT"].map((h) => (
               <div
-                onClick={() => setInspectedClaim("price")}
-                className="p-4 rounded-xl border-l-4 border-[var(--mg-success)] bg-[var(--mg-surface-subtle)] flex justify-between items-center cursor-pointer hover:bg-[var(--mg-surface-elevated)] transition-all min-h-[44px]"
+                key={h}
+                style={{
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontSize: "0.625rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  color: "var(--mg-text-muted)",
+                }}
               >
-                <span className="font-bold text-[var(--mg-text)]">
-                  ✓ Price: ₹3,999/month
-                </span>
-                <span className="px-2.5 py-0.5 rounded-md bg-[var(--mg-success-soft)] text-[var(--mg-success)] font-black text-[10px] sm:text-xs">
-                  ✓ VERIFIED (≤ ₹4,000 BUDGET CAP)
-                </span>
+                {h}
               </div>
-
-              <div
-                onClick={() => setInspectedClaim("billing")}
-                className="p-4 rounded-xl border-l-4 border-[var(--mg-success)] bg-[var(--mg-surface-subtle)] flex justify-between items-center cursor-pointer hover:bg-[var(--mg-surface-elevated)] transition-all min-h-[44px]"
-              >
-                <span className="font-bold text-[var(--mg-text)]">
-                  ✓ Monthly billing
-                </span>
-                <span className="px-2.5 py-0.5 rounded-md bg-[var(--mg-success-soft)] text-[var(--mg-success)] font-black text-[10px] sm:text-xs">
-                  ✓ VERIFIED (RECURRING CADENCE)
-                </span>
-              </div>
-
-              <div
-                onClick={() => setInspectedClaim("mentor")}
-                className={`p-4 rounded-xl border-l-4 border-amber-500 flex justify-between items-center cursor-pointer transition-all min-h-[44px] ${
-                  inspectedClaim === "mentor" ? "bg-amber-500/15 shadow-sm" : "bg-amber-500/5 hover:bg-amber-500/10"
-                }`}
-              >
-                <span className="font-bold text-[var(--mg-text)]">
-                  ? Human mentor: &ldquo;Expert guidance&rdquo;
-                </span>
-                <span className="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-500 font-black text-[10px] sm:text-xs">
-                  ? UNVERIFIED (FORMAT UNSTATED)
-                </span>
-              </div>
-
-              <div
-                onClick={() => setInspectedClaim("response")}
-                className={`p-4 rounded-xl border-l-4 border-amber-500 flex justify-between items-center cursor-pointer transition-all min-h-[44px] ${
-                  inspectedClaim === "response" ? "bg-amber-500/15 shadow-sm" : "bg-amber-500/5 hover:bg-amber-500/10"
-                }`}
-              >
-                <span className="font-bold text-[var(--mg-text)]">
-                  ? Response time: &ldquo;Slack access&rdquo;
-                </span>
-                <span className="px-2.5 py-0.5 rounded-md bg-amber-500/20 text-amber-500 font-black text-[10px] sm:text-xs">
-                  ? UNVERIFIED (NO 24H SLA PROOF)
-                </span>
-              </div>
-            </div>
-
-            <div className="pt-3 border-t border-[var(--mg-border)] flex flex-wrap justify-between items-center text-xs font-mono text-[var(--mg-text-muted)] gap-2">
-              <span>Insight: You weren&apos;t worse. Your offer was just harder for AI to verify.</span>
-              <span className="text-amber-500 font-bold">
-                {inspectedClaim === "mentor"
-                  ? "Cause: 'Expert guidance' lacks 1:1 human format clause."
-                  : inspectedClaim === "response"
-                  ? "Cause: 'Slack access' lacks a machine-enforceable 24h SLA clause."
-                  : "Forensic Cause: Missing Verifiable Proof"}
-              </span>
-            </div>
+            ))}
           </div>
+
+          {/* Claims */}
+          {CLAIMS.map((claim, idx) => {
+            const isActive = activeClaim === claim.id;
+            return (
+              <div
+                key={claim.id}
+                className="investigation-item"
+                onClick={() => setActiveClaim(isActive ? null : claim.id)}
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 2fr 1fr",
+                  gap: "1rem",
+                  padding: "1.25rem 1.5rem",
+                  borderBottom: idx < CLAIMS.length - 1 ? "1px solid var(--mg-glass-1-border)" : "none",
+                  background: isActive
+                    ? claim.status === "verified"
+                      ? "rgba(16, 185, 129, 0.04)"
+                      : "rgba(245, 158, 11, 0.04)"
+                    : "transparent",
+                  cursor: "pointer",
+                  transition: "background 0.25s ease",
+                }}
+              >
+                {/* Criterion */}
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-jetbrains-mono), monospace",
+                      fontSize: "0.75rem",
+                      fontWeight: 700,
+                      color: "var(--mg-text)",
+                      marginBottom: "0.25rem",
+                    }}
+                  >
+                    {claim.label}
+                  </div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.875rem",
+                      fontWeight: 600,
+                      color: "var(--mg-text)",
+                    }}
+                  >
+                    {claim.value}
+                  </div>
+                </div>
+
+                {/* What AI saw */}
+                <div>
+                  <div
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.875rem",
+                      color: "var(--mg-text-secondary)",
+                    }}
+                  >
+                    {claim.status === "verified"
+                      ? "AI confirmed this matches buyer constraints."
+                      : `AI flagged this: "${claim.value}" — ${claim.reason}`}
+                  </div>
+                  {isActive && claim.status === "unverified" && (
+                    <div
+                      style={{
+                        marginTop: "0.75rem",
+                        padding: "0.625rem 0.875rem",
+                        background: "rgba(245, 158, 11, 0.08)",
+                        border: "1px solid rgba(245, 158, 11, 0.2)",
+                        borderRadius: "0.5rem",
+                        fontFamily: "var(--font-inter), sans-serif",
+                        fontSize: "0.8125rem",
+                        color: "var(--mg-warning)",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Fix: Replace vague language with explicit, machine-verifiable clause.
+                    </div>
+                  )}
+                </div>
+
+                {/* Verdict */}
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span
+                    className="mg-pill"
+                    style={{
+                      background: claim.status === "verified" ? "var(--mg-success-soft)" : "var(--mg-warning-soft)",
+                      color: claim.status === "verified" ? "var(--mg-success)" : "var(--mg-warning)",
+                      border: `1px solid ${claim.status === "verified" ? "rgba(16,185,129,0.2)" : "rgba(245,158,11,0.2)"}`,
+                    }}
+                  >
+                    {claim.status === "verified" ? "✓ VERIFIED" : "? UNVERIFIED"}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* ─── Bottom Insight ─── */}
+        <div
+          style={{
+            marginTop: "1.5rem",
+            padding: "1rem 1.5rem",
+            background: "var(--mg-surface)",
+            border: "1px solid var(--mg-glass-1-border)",
+            borderRadius: "0.75rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}
+        >
+          <div
+            style={{
+              fontFamily: "var(--font-inter), sans-serif",
+              fontSize: "0.875rem",
+              color: "var(--mg-text-secondary)",
+            }}
+          >
+            <span style={{ fontWeight: 700, color: "var(--mg-text)" }}>Root cause:</span>{" "}
+            {activeClaim && CLAIMS.find((c) => c.id === activeClaim)?.reason
+              ? CLAIMS.find((c) => c.id === activeClaim)?.reason
+              : "Tap any unverified claim above to see the forensic diagnosis."}
+          </div>
+          <button
+            onClick={() => setActiveClaim(null)}
+            className="mg-btn-secondary"
+            style={{ fontSize: "0.75rem", padding: "0.375rem 1rem" }}
+          >
+            Clear
+          </button>
         </div>
       </div>
     </section>

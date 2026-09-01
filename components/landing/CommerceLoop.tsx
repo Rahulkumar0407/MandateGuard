@@ -1,28 +1,63 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+import React, { useRef, useEffect, useLayoutEffect } from "react";
 import { gsap } from "@/lib/gsap";
 
-interface LoopStage {
-  id: string;
-  name: string;
-  role: string;
-  metric: string;
-}
-
-const LOOP_STAGES: LoopStage[] = [
-  { id: "discover", name: "01 / DISCOVER", role: "AI searches the market for offers", metric: "148 Missions/day" },
-  { id: "understand", name: "02 / UNDERSTAND", role: "AI breaks offers into clear facts", metric: "100% Verifiable" },
-  { id: "choose", name: "03 / CHOOSE", role: "AI selects the clearest matching business", metric: "Rank #1 Choice" },
-  { id: "authorize", name: "04 / AUTHORIZE", role: "Buyer locks the exact agreed price and terms", metric: "Cryptographic SHA" },
-  { id: "protect", name: "05 / PROTECT", role: "Stops any unapproved price changes", metric: "Zero Term Drift" },
-  { id: "learn", name: "06 / LEARN", role: "Aggregates what AI buyers are searching for", metric: "3 Demand Signals" },
-  { id: "improve", name: "07 / IMPROVE", role: "Helps merchants fix missing terms to win more", metric: "+29% Win Rate" },
+const LOOP_STAGES = [
+  {
+    id: "discover",
+    name: "Discover",
+    description: "AI searches the market for offers matching buyer intent.",
+    detail: "148 buyer missions analyzed daily.",
+  },
+  {
+    id: "understand",
+    name: "Understand",
+    description: "Each offer is parsed into machine-verifiable facts.",
+    detail: "100% of commitments indexed.",
+  },
+  {
+    id: "choose",
+    name: "Choose",
+    description: "Hard constraints filter. The clearest offer wins.",
+    detail: "Rank #1 — maximum match confidence.",
+  },
+  {
+    id: "authorize",
+    name: "Authorize",
+    description: "Buyer locks exact terms into an immutable snapshot.",
+    detail: "SHA-256 snapshot bound to authorization.",
+  },
+  {
+    id: "protect",
+    name: "Protect",
+    description: "Every renewal checked against the original snapshot.",
+    detail: "Zero term drift tolerated.",
+  },
+  {
+    id: "learn",
+    name: "Learn",
+    description: "What buyers searched for becomes merchant intelligence.",
+    detail: "3 new demand signals captured.",
+  },
+  {
+    id: "improve",
+    name: "Improve",
+    description: "Merchants see exactly why they lost and how to win.",
+    detail: "+29% win rate after optimization.",
+  },
 ];
 
 export function CommerceLoop() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [activeStageIndex, setActiveStageIndex] = useState(0);
+  const [activeStage, setActiveStage] = React.useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveStage((prev) => (prev + 1) % LOOP_STAGES.length);
+    }, 2800);
+    return () => clearInterval(interval);
+  }, []);
 
   useLayoutEffect(() => {
     const prefersReduced =
@@ -33,19 +68,19 @@ export function CommerceLoop() {
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        ".loop-stage-btn",
-        { opacity: 0.7, y: 10 },
+        ".loop-content",
+        { opacity: 0, y: 24 },
         {
+          opacity: 1,
+          y: 0,
+          duration: 0.7,
+          ease: "power3.out",
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top 70%",
-            end: "top 35%",
-            scrub: 0.5,
+            end: "top 30%",
+            scrub: false,
           },
-          opacity: 1,
-          y: 0,
-          stagger: 0.04,
-          ease: "power2.out",
         },
       );
     }, sectionRef);
@@ -53,104 +88,288 @@ export function CommerceLoop() {
     return () => ctx.revert();
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveStageIndex((prev) => (prev + 1) % LOOP_STAGES.length);
-    }, 3200);
-    return () => clearInterval(interval);
-  }, []);
-
-  const activeStage = LOOP_STAGES[activeStageIndex];
+  const activeItem = LOOP_STAGES[activeStage];
 
   return (
     <section
       ref={sectionRef}
       id="growth-loop"
-      className="w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 py-24 sm:py-32 flex flex-col justify-center box-border"
+      className="w-full"
+      style={{ background: "var(--mg-bg)" }}
     >
-      {/* ─── Left-Aligned Narrative ─── */}
-      <div className="w-full text-left mb-10 sm:mb-12">
-        <span className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-[var(--mg-brand)] block mb-3">
-          09 / THE LOOP
-        </span>
+      <div
+        className="mg-section loop-content"
+        style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "var(--section-py) var(--section-px)" }}
+      >
+        {/* Left-aligned editorial header */}
+        <div style={{ marginBottom: "clamp(3rem, 6vw, 5rem)" }}>
+          <div
+            className="mg-micro"
+            style={{
+              color: "var(--mg-text-muted)",
+              marginBottom: "1rem",
+              letterSpacing: "0.12em",
+            }}
+          >
+            09 — THE LOOP
+          </div>
 
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-[-0.04em] text-[var(--mg-text)] leading-[1.02] mb-3 max-w-[16ch] [text-wrap:balance]">
-          Transactions create
-          <br />
-          <span className="text-[var(--mg-brand)]">intelligence.</span>
-        </h2>
+          <h2 className="mg-display" style={{ color: "var(--mg-text)", maxWidth: "18ch", marginBottom: "1.5rem" }}>
+            Intelligence from
+            <br />
+            <span className="mg-brand">every transaction.</span>
+          </h2>
 
-        <p className="text-sm sm:text-base text-[var(--mg-text-secondary)] leading-relaxed max-w-[50ch]">
-          Every choice teaches the market. When buyers transact and unauthorized changes are stopped, MandateGuard learns what AI buyers want—helping businesses improve.
-        </p>
-      </div>
+          <p
+            className="mg-body"
+            style={{ maxWidth: "48ch", color: "var(--mg-text-secondary)" }}
+          >
+            Each purchase, authorization, and protection event teaches the market
+            what AI buyers need. The loop feeds itself.
+          </p>
+        </div>
 
-      {/* ─── Continuous System Flow ─── */}
-      <div className="w-full space-y-4">
-        {/* Node Flow Bar */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
-          {LOOP_STAGES.map((stg, idx) => {
-            const isActive = idx === activeStageIndex;
-            return (
-              <button
-                key={stg.id}
-                onClick={() => setActiveStageIndex(idx)}
-                className={`loop-stage-btn p-3 rounded-xl border text-left font-mono transition-all cursor-pointer min-w-0 min-h-[44px] ${
-                  isActive
-                    ? "border-[var(--mg-brand)] bg-[var(--mg-brand-soft)] shadow-sm"
-                    : "border-[var(--mg-border)] bg-[var(--mg-surface)] hover:border-[var(--mg-border-strong)] opacity-60"
-                }`}
+        {/* ─── Living Loop Visualization ─── */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "clamp(2rem, 4vw, 4rem)",
+            alignItems: "start",
+          }}
+          className="loop-grid"
+        >
+          {/* Left: Visual Loop */}
+          <div
+            style={{
+              position: "relative",
+              aspectRatio: "1",
+              maxWidth: "480px",
+            }}
+          >
+            {/* Outer ring */}
+            <svg
+              viewBox="0 0 400 400"
+              style={{ width: "100%", height: "100%", overflow: "visible" }}
+            >
+              {/* Background track */}
+              <circle
+                cx="200"
+                cy="200"
+                r="160"
+                fill="none"
+                stroke="var(--mg-glass-1-border)"
+                strokeWidth="1"
+              />
+
+              {/* Active arc */}
+              <circle
+                cx="200"
+                cy="200"
+                r="160"
+                fill="none"
+                stroke="var(--mg-brand)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray="40 12"
+                className="loop-arc"
+                style={{
+                  transformOrigin: "center",
+                  transform: "rotate(-90deg)",
+                  animation: "spin 8s linear infinite",
+                  opacity: 0.7,
+                }}
+              />
+
+              {/* Node dots */}
+              {LOOP_STAGES.map((stage, i) => {
+                const angle = (i / LOOP_STAGES.length) * 2 * Math.PI - Math.PI / 2;
+                const x = 200 + 160 * Math.cos(angle);
+                const y = 200 + 160 * Math.sin(angle);
+                const isActive = i === activeStage;
+                const isPast = i < activeStage;
+                return (
+                  <g key={stage.id}>
+                    <circle
+                      cx={x}
+                      cy={y}
+                      r={isActive ? 14 : 10}
+                      fill={isActive ? "var(--mg-brand)" : isPast ? "var(--mg-brand)" : "var(--mg-surface)"}
+                      stroke={isActive ? "var(--mg-brand)" : "var(--mg-glass-1-border)"}
+                      strokeWidth={isActive ? 3 : 1.5}
+                      style={{
+                        transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                        filter: isActive ? `drop-shadow(0 0 8px var(--mg-brand-glow))` : "none",
+                      }}
+                    />
+                    <text
+                      x={x}
+                      y={y + 4}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      fill={isActive || isPast ? "#FFFFFF" : "var(--mg-text-muted)"}
+                      fontSize="8"
+                      fontFamily="var(--font-jetbrains-mono), monospace"
+                      fontWeight="700"
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </text>
+                  </g>
+                );
+              })}
+
+              {/* Center focal point */}
+              <circle
+                cx="200"
+                cy="200"
+                r="56"
+                fill="var(--mg-surface)"
+                stroke="var(--mg-glass-1-border)"
+                strokeWidth="1"
+              />
+              <text
+                x="200"
+                y="192"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="var(--mg-text-muted)"
+                fontSize="9"
+                fontFamily="var(--font-jetbrains-mono), monospace"
+                fontWeight="700"
+                letterSpacing="0.08em"
               >
-                <span className="text-xs font-bold block text-[var(--mg-text)] truncate mb-0.5">
-                  {stg.name}
-                </span>
-                <span className="text-[10px] text-[var(--mg-text-muted)] block truncate">
-                  {stg.metric}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Active Stage Display */}
-        <div className="p-6 sm:p-9 rounded-2xl border border-[var(--mg-brand-line)] bg-[var(--mg-surface)] shadow-lg space-y-5">
-          <div className="flex justify-between items-start flex-wrap gap-4 border-b border-[var(--mg-border)] pb-4">
-            <div>
-              <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-brand)] tracking-widest block mb-1">
-                STAGE 0{activeStageIndex + 1}
-              </span>
-              <h3 className="text-xl sm:text-2xl font-bold text-[var(--mg-text)] tracking-tight truncate">
-                {activeStage.name}
-              </h3>
-            </div>
-
-            <div className="text-left sm:text-right">
-              <span className="text-xl sm:text-2xl font-bold font-mono text-[var(--mg-brand)] block tracking-tight">
-                {activeStage.metric}
-              </span>
-              <span className="text-[10px] text-[var(--mg-text-muted)] font-mono">
-                Demand Signal
-              </span>
-            </div>
+                {activeItem.name.toUpperCase()}
+              </text>
+              <text
+                x="200"
+                y="212"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill="var(--mg-brand)"
+                fontSize="11"
+                fontFamily="var(--font-space-grotesk), sans-serif"
+                fontWeight="700"
+              >
+                {String(activeStage + 1).padStart(2, "0")} / {String(LOOP_STAGES.length).padStart(2, "0")}
+              </text>
+            </svg>
           </div>
 
-          <div className="space-y-3 font-mono text-xs">
-            <div className="text-[var(--mg-text-secondary)] text-xs sm:text-sm leading-relaxed">
-              <strong>Role:</strong> {activeStage.role}. Transactions feed back into merchant intelligence, revealing exact buyer demands (like 24h SLA guarantees or 1:1 human mentoring) to optimize merchant win rate.
+          {/* Right: Active Stage Detail */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              paddingTop: "2rem",
+            }}
+          >
+            {/* Stage number */}
+            <div
+              className="mg-micro"
+              style={{
+                color: "var(--mg-brand)",
+                marginBottom: "1rem",
+                letterSpacing: "0.12em",
+              }}
+            >
+              STAGE {String(activeStage + 1).padStart(2, "0")} OF {String(LOOP_STAGES.length).padStart(2, "0")}
             </div>
 
-            <div className="p-3 rounded-xl bg-[var(--mg-bg)] border border-[var(--mg-border)] text-xs text-[var(--mg-text)] flex justify-between items-center">
-              <span>Flywheel Cycle: Continuous</span>
-              <span className="text-[var(--mg-brand)] font-bold">Autonomous Optimization</span>
-            </div>
-          </div>
+            {/* Stage name */}
+            <h3
+              className="mg-headline"
+              style={{ color: "var(--mg-text)", marginBottom: "1rem" }}
+            >
+              {activeItem.name}
+            </h3>
 
-          <div className="pt-3 border-t border-[var(--mg-border)] flex flex-wrap justify-between items-center text-xs font-mono text-[var(--mg-text-muted)] gap-2">
-            <span>MandateGuard Growth Loop</span>
-            <span className="text-[var(--mg-brand)] font-bold">Buyer ➔ AI ➔ Choice ➔ Purchase ➔ Improvement</span>
+            {/* Stage description */}
+            <p
+              className="mg-body"
+              style={{ color: "var(--mg-text-secondary)", marginBottom: "1.5rem", maxWidth: "40ch" }}
+            >
+              {activeItem.description}
+            </p>
+
+            {/* Stage detail metric */}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                padding: "0.875rem 1.25rem",
+                background: "var(--mg-surface)",
+                border: "1px solid var(--mg-glass-1-border)",
+                borderRadius: "0.75rem",
+                width: "fit-content",
+              }}
+            >
+              <div
+                style={{
+                  width: "8px",
+                  height: "8px",
+                  borderRadius: "50%",
+                  background: "var(--mg-brand)",
+                  animation: "pulse 2s ease-in-out infinite",
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontSize: "0.8125rem",
+                  fontWeight: 700,
+                  color: "var(--mg-text-secondary)",
+                }}
+              >
+                {activeItem.detail}
+              </span>
+            </div>
+
+            {/* Stage dots */}
+            <div style={{ display: "flex", gap: "0.5rem", marginTop: "2rem" }}>
+              {LOOP_STAGES.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveStage(i)}
+                  style={{
+                    width: i === activeStage ? "24px" : "8px",
+                    height: "8px",
+                    borderRadius: "4px",
+                    background:
+                      i === activeStage
+                        ? "var(--mg-brand)"
+                        : i < activeStage
+                        ? "var(--mg-brand)"
+                        : "var(--mg-glass-1-border)",
+                    border: "none",
+                    cursor: "pointer",
+                    transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+                    padding: 0,
+                  }}
+                  aria-label={`Go to stage ${i + 1}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(-90deg); }
+          to { transform: rotate(270deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        @media (max-width: 640px) {
+          .loop-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -9,7 +9,7 @@ interface OfferFixExperienceProps {
 
 export function OfferFixExperience({ onSimulateClick }: OfferFixExperienceProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isFixed, setIsFixed] = useState(true);
+  const [isFixed, setIsFixed] = useState(false);
 
   useLayoutEffect(() => {
     const prefersReduced =
@@ -19,23 +19,21 @@ export function OfferFixExperience({ onSimulateClick }: OfferFixExperienceProps)
     if (prefersReduced || !sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Counter animation on scroll
-      const scoreObj = { val: 62 };
-      gsap.to(scoreObj, {
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 65%",
-          end: "top 25%",
-          scrub: 0.5,
-          onUpdate: () => {
-            const currentScore = Math.round(scoreObj.val);
-            const scoreEl = document.getElementById("confidence-counter-num");
-            if (scoreEl) scoreEl.textContent = String(currentScore);
+      gsap.fromTo(
+        ".fix-content",
+        { opacity: 0.85, y: 20 },
+        {
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 70%",
+            end: "top 30%",
+            scrub: 0.5,
           },
+          opacity: 1,
+          y: 0,
+          ease: "power2.out",
         },
-        val: 91,
-        ease: "power1.inOut",
-      });
+      );
     }, sectionRef);
 
     return () => ctx.revert();
@@ -45,149 +43,304 @@ export function OfferFixExperience({ onSimulateClick }: OfferFixExperienceProps)
     <section
       ref={sectionRef}
       id="fix-it"
-      className="w-full max-w-6xl mx-auto px-5 sm:px-8 md:px-12 py-24 sm:py-32 flex flex-col justify-center box-border"
+      className="w-full"
+      style={{ background: "var(--mg-bg)" }}
     >
-      {/* ─── Left-Aligned Narrative ─── */}
-      <div className="w-full text-left mb-10 sm:mb-12">
-        <span className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-[var(--mg-brand)] block mb-3">
-          05 / THE TRANSFORMATION
-        </span>
+      <div
+        className="mg-section fix-content"
+        style={{ maxWidth: "var(--container-wide)", margin: "0 auto", padding: "var(--section-py) var(--section-px)" }}
+      >
+        {/* ─── Header ─── */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "clamp(2rem, 5vw, 5rem)",
+            alignItems: "start",
+            marginBottom: "clamp(3rem, 6vw, 5rem)",
+          }}
+        >
+          <div>
+            <div className="mg-micro" style={{ color: "var(--mg-text-muted)", marginBottom: "1rem", letterSpacing: "0.12em" }}>
+              05 — THE FIX
+            </div>
+            <h2 className="mg-display" style={{ color: "var(--mg-text)", maxWidth: "14ch" }}>
+              Make the promise
+              <br />
+              <span className="mg-brand">explicit.</span>
+            </h2>
+          </div>
 
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-[-0.04em] text-[var(--mg-text)] leading-[1.02] mb-3 max-w-[16ch] [text-wrap:balance]">
-          Make the promise
-          <br />
-          <span className="text-[var(--mg-brand)]">explicit.</span>
-        </h2>
+          <div style={{ paddingTop: "0.5rem" }}>
+            <p className="mg-body" style={{ color: "var(--mg-text-secondary)", maxWidth: "44ch" }}>
+              AI match confidence measures how well AI can verify your commercial commitments.
+              Better clarity means higher confidence and better ranking.
+            </p>
+          </div>
+        </div>
 
-        <p className="text-sm sm:text-base text-[var(--mg-text-secondary)] leading-relaxed max-w-[50ch]">
-          Clearer promise. Higher confidence. Better chance of being chosen.
-        </p>
-      </div>
-
-      {/* ─── In-Place Fix Sheet (Counter is the Focus) ─── */}
-      <div className="w-full">
-        <div className="p-6 sm:p-10 rounded-2xl border border-[var(--mg-border)] bg-[var(--mg-surface)] shadow-lg space-y-6">
-          {/* Header & Match Confidence Counter */}
-          <div className="flex justify-between items-start flex-wrap gap-4 border-b border-[var(--mg-border)] pb-6">
-            <div>
-              <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-brand)] tracking-widest block mb-1">
-                TRANSFORMED PROMISES
+        {/* ─── Offer Transformation ─── */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "clamp(2rem, 4vw, 4rem)",
+            alignItems: "stretch",
+          }}
+        >
+          {/* Left: Before */}
+          <div
+            style={{
+              padding: "2rem",
+              background: isFixed ? "var(--mg-bg)" : "var(--mg-surface)",
+              border: `1px solid ${isFixed ? "var(--mg-glass-1-border)" : "var(--mg-glass-1-border)"}`,
+              borderRadius: "1rem",
+              opacity: isFixed ? 0.5 : 1,
+              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem",
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontSize: "0.625rem",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: "var(--mg-text-muted)",
+                }}
+              >
+                BEFORE
               </span>
-              <h3 className="text-xl sm:text-2xl font-bold text-[var(--mg-text)] tracking-tight truncate">
-                YOUR BUSINESS (InterviewForge)
-              </h3>
+              <span className="mg-pill" style={{ background: "var(--mg-warning-soft)", color: "var(--mg-warning)", border: "1px solid rgba(245,158,11,0.2)" }}>
+                SCORE: 62
+              </span>
             </div>
 
-            {/* Score Focus */}
-            <div className="text-left sm:text-right">
-              <span className="text-[10px] font-mono uppercase font-bold text-[var(--mg-text-muted)] tracking-wider block">
-                AI MATCH CONFIDENCE
-              </span>
-              <div className="flex items-baseline justify-start sm:justify-end gap-1.5">
-                <span
-                  id="confidence-counter-num"
-                  className={`text-4xl sm:text-6xl font-extrabold font-mono tracking-tight transition-colors duration-300 ${
-                    isFixed ? "text-[var(--mg-success)]" : "text-amber-500"
-                  }`}
+            <div
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                color: "var(--mg-text)",
+                marginBottom: "1rem",
+              }}
+            >
+              Your Business — InterviewForge
+            </div>
+
+            <div
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "1rem",
+                lineHeight: 1.7,
+                color: "var(--mg-text-secondary)",
+                fontStyle: "italic",
+                marginBottom: "1.5rem",
+              }}
+            >
+              &ldquo;Expert guidance &amp; recordings for distributed systems interview prep.&rdquo;
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              {[
+                { label: "PRICE", value: "₹3,999/month", ok: true },
+                { label: "MENTOR", value: '"Expert guidance"', ok: false },
+                { label: "RESPONSE", value: '"Slack access"', ok: false },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "0.625rem 0.875rem",
+                    background: "var(--mg-bg)",
+                    border: "1px solid var(--mg-glass-1-border)",
+                    borderRadius: "0.5rem",
+                  }}
                 >
-                  {isFixed ? 91 : 62}
-                </span>
-                <span className="text-base font-mono text-[var(--mg-text-muted)] font-bold">/ 100</span>
-              </div>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-jetbrains-mono), monospace",
+                      fontSize: "0.6875rem",
+                      fontWeight: 700,
+                      color: "var(--mg-text-muted)",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {item.label}
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: item.ok ? "var(--mg-success)" : "var(--mg-warning)",
+                    }}
+                  >
+                    {item.value}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* Morphing Claims */}
-          <div className="space-y-3 font-mono text-xs sm:text-sm">
-            <div className="p-4 rounded-xl border-l-4 border-[var(--mg-success)] bg-[var(--mg-surface-subtle)] flex justify-between items-center">
-              <span className="font-bold text-[var(--mg-text)]">
-                ✓ Price: ₹3,999/month
-              </span>
-              <span className="px-2.5 py-0.5 rounded-md bg-[var(--mg-success-soft)] text-[var(--mg-success)] font-black text-[10px] sm:text-xs">
-                VERIFIED BUDGET CAP
-              </span>
-            </div>
-
-            <div className="p-4 rounded-xl border-l-4 border-[var(--mg-success)] bg-[var(--mg-surface-subtle)] flex justify-between items-center">
-              <span className="font-bold text-[var(--mg-text)]">
-                ✓ Monthly recurring billing
-              </span>
-              <span className="px-2.5 py-0.5 rounded-md bg-[var(--mg-success-soft)] text-[var(--mg-success)] font-black text-[10px] sm:text-xs">
-                VERIFIED AUTO-MANDATE
-              </span>
-            </div>
-
-            {/* Morph 1 */}
+          {/* Right: After */}
+          <div
+            style={{
+              padding: "2rem",
+              background: isFixed ? "var(--mg-surface)" : "var(--mg-bg)",
+              border: `1px solid ${isFixed ? "var(--mg-brand)" : "var(--mg-glass-1-border)"}`,
+              borderRadius: "1rem",
+              boxShadow: isFixed ? "0 0 0 1px rgba(11,92,255,0.1), 0 8px 32px -8px var(--mg-brand-glow)" : "none",
+              transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+            }}
+          >
             <div
-              style={{ transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)" }}
-              className={`p-4 rounded-xl border-l-4 ${
-                isFixed ? "border-[var(--mg-success)] bg-[var(--mg-success-soft)]/20" : "border-amber-500 bg-amber-500/10"
-              } flex justify-between items-center`}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1.5rem",
+              }}
             >
-              <div className="flex items-center gap-2.5">
-                <span className="font-bold text-[var(--mg-text)]">
-                  {isFixed ? "✓ DEDICATED 1:1 HUMAN MENTOR" : "? Human mentor: \"Expert guidance\""}
-                </span>
-                {isFixed && (
-                  <span className="text-[11px] font-mono text-[var(--mg-text-muted)] line-through">
-                    &ldquo;Expert guidance&rdquo;
-                  </span>
-                )}
-              </div>
               <span
-                className={`px-2.5 py-0.5 rounded-md font-black text-[10px] sm:text-xs ${
-                  isFixed ? "bg-[var(--mg-success-soft)] text-[var(--mg-success)]" : "bg-amber-500/20 text-amber-500"
-                }`}
+                style={{
+                  fontFamily: "var(--font-jetbrains-mono), monospace",
+                  fontSize: "0.625rem",
+                  fontWeight: 700,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.1em",
+                  color: "var(--mg-text-muted)",
+                }}
               >
-                {isFixed ? "✓ 8 SESSIONS EXPLICIT" : "? UNVERIFIED"}
+                AFTER
+              </span>
+              <span className="mg-pill" style={{ background: "var(--mg-success-soft)", color: "var(--mg-success)", border: "1px solid rgba(16,185,129,0.2)" }}>
+                SCORE: 91
               </span>
             </div>
 
-            {/* Morph 2 */}
             <div
-              style={{ transition: "all 0.35s cubic-bezier(0.16, 1, 0.3, 1)" }}
-              className={`p-4 rounded-xl border-l-4 ${
-                isFixed ? "border-[var(--mg-success)] bg-[var(--mg-success-soft)]/20" : "border-amber-500 bg-amber-500/10"
-              } flex justify-between items-center`}
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                color: "var(--mg-text)",
+                marginBottom: "1rem",
+              }}
             >
-              <div className="flex items-center gap-2.5">
-                <span className="font-bold text-[var(--mg-text)]">
-                  {isFixed ? "✓ GUARANTEED 24H RESPONSE SLA" : "? Response time: \"Slack access\""}
-                </span>
-                {isFixed && (
-                  <span className="text-[11px] font-mono text-[var(--mg-text-muted)] line-through">
-                    &ldquo;Slack access&rdquo;
+              Your Business — InterviewForge
+            </div>
+
+            <div
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "1rem",
+                lineHeight: 1.7,
+                color: "var(--mg-text-secondary)",
+                fontStyle: "italic",
+                marginBottom: "1.5rem",
+                textDecoration: "line-through",
+                opacity: 0.4,
+              }}
+            >
+              &ldquo;Expert guidance &amp; recordings for distributed systems interview prep.&rdquo;
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              {[
+                { label: "PRICE", value: "₹3,999/month", ok: true },
+                { label: "MENTOR", value: "Dedicated 1:1 Human Mentor", ok: true },
+                { label: "RESPONSE", value: "Guaranteed 24h SLA", ok: true },
+              ].map((item) => (
+                <div
+                  key={item.label}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "0.625rem 0.875rem",
+                    background: "var(--mg-bg)",
+                    border: "1px solid rgba(16,185,129,0.2)",
+                    borderRadius: "0.5rem",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "var(--font-jetbrains-mono), monospace",
+                      fontSize: "0.6875rem",
+                      fontWeight: 700,
+                      color: "var(--mg-text-muted)",
+                      letterSpacing: "0.04em",
+                    }}
+                  >
+                    {item.label}
                   </span>
-                )}
-              </div>
-              <span
-                className={`px-2.5 py-0.5 rounded-md font-black text-[10px] sm:text-xs ${
-                  isFixed ? "bg-[var(--mg-success-soft)] text-[var(--mg-success)]" : "bg-amber-500/20 text-amber-500"
-                }`}
-              >
-                {isFixed ? "✓ 24H SLA CONTRACT" : "? UNVERIFIED"}
-              </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-inter), sans-serif",
+                      fontSize: "0.8125rem",
+                      fontWeight: 600,
+                      color: "var(--mg-success)",
+                    }}
+                  >
+                    {item.value}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
+        </div>
 
-          {/* Action Row */}
-          <div className="pt-3 border-t border-[var(--mg-border)] flex flex-wrap justify-between items-center gap-3">
+        {/* ─── Action Bar ─── */}
+        <div
+          style={{
+            marginTop: "2rem",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "1rem",
+          }}
+        >
+          <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
             <button
               onClick={() => setIsFixed(!isFixed)}
-              className="text-xs font-mono font-bold text-[var(--mg-brand)] underline hover:text-[var(--mg-brand-hover)] cursor-pointer"
+              className="mg-btn-secondary"
+              style={{ fontSize: "0.8125rem" }}
             >
-              {isFixed ? "↺ View Unclear State (Score: 62)" : "Apply Explicit Commitments (Score: 91) ➔"}
+              {isFixed ? "Show before" : "Apply fixes →"}
             </button>
 
-            {onSimulateClick && (
-              <button
-                onClick={onSimulateClick}
-                className="px-5 py-2.5 rounded-xl bg-[var(--mg-brand)] text-white font-mono text-xs font-black shadow hover:bg-[var(--mg-brand-hover)] transition-all cursor-pointer min-h-[40px]"
-              >
-                See AI Chooses You ➔
-              </button>
-            )}
+            <div
+              style={{
+                fontFamily: "var(--font-inter), sans-serif",
+                fontSize: "0.875rem",
+                color: isFixed ? "var(--mg-success)" : "var(--mg-text-secondary)",
+                fontWeight: isFixed ? 600 : 400,
+                transition: "color 0.3s ease",
+              }}
+            >
+              {isFixed
+                ? "✓ AI match confidence improved from 62 to 91"
+                : "Toggle to see the transformation"}
+            </div>
           </div>
+
+          {onSimulateClick && (
+            <button onClick={onSimulateClick} className="mg-btn-primary" style={{ fontSize: "0.8125rem" }}>
+              See AI choose you →
+            </button>
+          )}
         </div>
       </div>
     </section>

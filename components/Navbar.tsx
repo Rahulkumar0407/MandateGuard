@@ -417,10 +417,10 @@ export function Navbar({
                 )}
               </div>
 
-              {/* Mobile menu toggle */}
+              {/* Mobile menu toggle — hidden on desktop */}
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="md:hidden"
+                className="flex md:hidden mg-mobile-toggle"
                 style={{
                   width: "34px",
                   height: "34px",
@@ -429,12 +429,12 @@ export function Navbar({
                   background: "var(--mg-surface-subtle)",
                   cursor: "pointer",
                   fontSize: "16px",
-                  display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   color: "var(--mg-text-secondary)",
                 }}
                 aria-label="Toggle navigation menu"
+                aria-expanded={showMobileMenu}
               >
                 {showMobileMenu ? "✕" : "☰"}
               </button>
@@ -444,7 +444,7 @@ export function Navbar({
           {/* ─── Mobile Expanded Menu ─── */}
           {showMobileMenu && (
             <div
-              className="md:hidden"
+              className="flex flex-col md:hidden mg-mobile-expanded"
               style={{
                 borderTop: "1px solid var(--mg-border)",
                 padding: "8px",
@@ -481,10 +481,11 @@ export function Navbar({
       </header>
 
       {/* ═══════════════════════════════════════════════════════
-          MOBILE BOTTOM DOCK — Quick tab access
+          MOBILE BOTTOM DOCK — Quick tab access (hidden on desktop via CSS+Tailwind)
           ═══════════════════════════════════════════════════════ */}
       <div
-        className="md:hidden"
+        className="flex md:hidden mg-bottom-dock"
+        data-testid="mobile-bottom-nav"
         style={{
           position: "fixed",
           bottom: "12px",
@@ -498,7 +499,6 @@ export function Navbar({
           borderRadius: "18px",
           boxShadow: "var(--mg-glass-2-shadow)",
           padding: "6px",
-          display: "flex",
           alignItems: "center",
           justifyContent: "space-around",
         }}
@@ -538,6 +538,15 @@ export function Navbar({
           );
         })}
       </div>
+      <style>{`
+        @media (min-width: 768px) {
+          .mg-bottom-dock,
+          .mg-mobile-toggle,
+          .mg-mobile-expanded {
+            display: none !important;
+          }
+        }
+      `}</style>
     </>
   );
 }

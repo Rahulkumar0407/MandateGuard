@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useTheme } from "./ThemeProvider";
-import { HeroScene } from "./HeroScene";
+import { MandateGuardHero } from "./hero/MandateGuardHero";
 import { ShiftScene } from "./landing/ShiftScene";
 import { OfferClarityMorph } from "./landing/OfferClarityMorph";
 import { RankingExperience } from "./landing/RankingExperience";
@@ -140,9 +140,9 @@ export function PublicLandingPage({
       </header>
 
       {/* ═══════════════════════════════════════════════════════
-          HERO — "WATCH AN AI SHOP" Signature Scene (LOCKED)
+          M20 HERO — RAZORPAY DISCIPLINE
           ═══════════════════════════════════════════════════════ */}
-      <HeroScene onGetStarted={onGetStarted} onExploreDemo={onExploreDemo} />
+      <MandateGuardHero onGetStarted={onGetStarted} onExploreDemo={onExploreDemo} />
 
       {/* ═══════════════════════════════════════════════════════
           M10-LANDING-ART-DIRECTION-003: PRODUCT FILM EXPERIENCE

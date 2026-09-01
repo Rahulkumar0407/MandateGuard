@@ -10,43 +10,93 @@ interface FinalCTAProps {
 export function FinalCTA({ onGetStarted, onExploreDemo }: FinalCTAProps) {
   return (
     <section
-      className="w-full max-w-5xl mx-auto px-5 sm:px-8 md:px-12 py-28 sm:py-40 flex flex-col justify-center items-center text-center box-border"
+      className="w-full"
+      style={{
+        background: "var(--mg-bg)",
+        borderTop: "1px solid var(--mg-glass-1-border)",
+      }}
     >
-      <div className="w-full max-w-3xl space-y-6">
-        <span className="text-[11px] font-mono font-bold uppercase tracking-[0.16em] text-[var(--mg-brand)] inline-block">
-          THE NEW COMMERCE TRUST LAYER
-        </span>
+      <div
+        className="mg-section"
+        style={{
+          maxWidth: "var(--container-tight)",
+          margin: "0 auto",
+          padding: "var(--section-py) var(--section-px)",
+          textAlign: "center",
+        }}
+      >
+        {/* Large editorial statement */}
+        <div
+          style={{
+            marginBottom: "clamp(2rem, 4vw, 3rem)",
+          }}
+        >
+          <div className="mg-micro" style={{ color: "var(--mg-text-muted)", marginBottom: "1.5rem", letterSpacing: "0.12em" }}>
+            THE NEW COMMERCE TRUST LAYER
+          </div>
 
-        <h2 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-[-0.045em] text-[var(--mg-text)] leading-[0.98] [text-wrap:balance]">
-          BECOME THE
-          <br />
-          BUSINESS AI
-          <br />
-          <span className="text-[var(--mg-brand)]">CHOOSES.</span>
-        </h2>
+          <h2 className="mg-display" style={{ color: "var(--mg-text)", maxWidth: "14ch", margin: "0 auto 1.5rem" }}>
+            Become the business AI
+            <br />
+            <span className="mg-brand">chooses.</span>
+          </h2>
 
-        <p className="text-base sm:text-xl text-[var(--mg-text-secondary)] max-w-lg mx-auto leading-relaxed [text-wrap:balance]">
-          AI is becoming the buyer. Make sure it can find you, understand your terms, and transact with complete trust.
-        </p>
-
-        <div className="flex flex-wrap justify-center gap-3.5 pt-4">
-          <button
-            onClick={onGetStarted}
-            className="px-7 py-3.5 rounded-xl bg-[#0B5CFF] text-white font-bold text-sm tracking-wide shadow-md hover:bg-[#004DE6] transition-all cursor-pointer min-h-[44px]"
+          <p
+            className="mg-body"
+            style={{
+              color: "var(--mg-text-secondary)",
+              maxWidth: "42ch",
+              margin: "0 auto",
+            }}
           >
+            AI is becoming the buyer. Make sure it can find you, understand your terms,
+            and transact with complete trust.
+          </p>
+        </div>
+
+        {/* CTAs */}
+        <div
+          style={{
+            display: "flex",
+            gap: "1rem",
+            justifyContent: "center",
+            flexWrap: "wrap",
+            marginBottom: "clamp(3rem, 5vw, 4rem)",
+          }}
+        >
+          <button onClick={onGetStarted} className="mg-btn-primary">
             Get started →
           </button>
-          <button
-            onClick={onExploreDemo}
-            className="px-7 py-3.5 rounded-xl bg-[var(--mg-surface)] border border-[var(--mg-border)] text-[var(--mg-text)] font-bold text-sm hover:bg-[var(--mg-surface-elevated)] transition-all cursor-pointer min-h-[44px]"
-          >
+          <button onClick={onExploreDemo} className="mg-btn-secondary">
             See how it works
           </button>
         </div>
 
-        <div className="pt-8 border-t border-[var(--mg-border)] flex flex-wrap justify-center sm:justify-between items-center text-xs font-mono text-[var(--mg-text-muted)] gap-3">
-          <span>Get found · Get understood · Get chosen · Stay protected</span>
-          <span className="text-[var(--mg-brand)] font-bold">Protected by MandateGuard</span>
+        {/* Tagline bar */}
+        <div
+          style={{
+            paddingTop: "clamp(2rem, 4vw, 3rem)",
+            borderTop: "1px solid var(--mg-glass-1-border)",
+            display: "flex",
+            justifyContent: "center",
+            gap: "clamp(1rem, 3vw, 2.5rem)",
+            flexWrap: "wrap",
+          }}
+        >
+          {["Get found", "Get understood", "Get chosen", "Stay protected"].map((item) => (
+            <span
+              key={item}
+              style={{
+                fontFamily: "var(--font-jetbrains-mono), monospace",
+                fontSize: "0.6875rem",
+                fontWeight: 600,
+                color: "var(--mg-text-muted)",
+                letterSpacing: "0.04em",
+              }}
+            >
+              {item}
+            </span>
+          ))}
         </div>
       </div>
     </section>
